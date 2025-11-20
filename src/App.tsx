@@ -6,8 +6,13 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Home from "./pages/Home";
+import Association from "./pages/Association";
+import NosActions from "./pages/NosActions";
+import Soutenir from "./pages/Soutenir";
+import Contact from "./pages/Contact";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/admin/Dashboard";
+import Posts from "./pages/admin/Posts";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,12 +26,24 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/association" element={<Association />} />
+            <Route path="/nos-actions" element={<NosActions />} />
+            <Route path="/soutenir" element={<Soutenir />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/admin"
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/posts"
+              element={
+                <ProtectedRoute>
+                  <Posts />
                 </ProtectedRoute>
               }
             />
