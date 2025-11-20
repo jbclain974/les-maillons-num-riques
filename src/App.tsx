@@ -19,6 +19,13 @@ import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/admin/Dashboard";
 import Posts from "./pages/admin/Posts";
+import PostForm from "./pages/admin/PostForm";
+import Events from "./pages/admin/Events";
+import EventForm from "./pages/admin/EventForm";
+import Activities from "./pages/admin/Activities";
+import Messages from "./pages/admin/Messages";
+import Users from "./pages/admin/Users";
+import Settings from "./pages/admin/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +63,78 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Posts />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/posts/new"
+              element={
+                <ProtectedRoute>
+                  <PostForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/posts/:id"
+              element={
+                <ProtectedRoute>
+                  <PostForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events"
+              element={
+                <ProtectedRoute>
+                  <Events />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events/new"
+              element={
+                <ProtectedRoute>
+                  <EventForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/events/:id"
+              element={
+                <ProtectedRoute>
+                  <EventForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/activities"
+              element={
+                <ProtectedRoute>
+                  <Activities />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/messages"
+              element={
+                <ProtectedRoute>
+                  <Messages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/users"
+              element={
+                <ProtectedRoute>
+                  <Users />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/settings"
+              element={
+                <ProtectedRoute>
+                  <Settings />
                 </ProtectedRoute>
               }
             />
