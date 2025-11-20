@@ -26,6 +26,8 @@ import Activities from "./pages/admin/Activities";
 import Messages from "./pages/admin/Messages";
 import Users from "./pages/admin/Users";
 import Settings from "./pages/admin/Settings";
+import Pages from "./pages/admin/Pages";
+import PageForm from "./pages/admin/PageForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -135,6 +137,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pages"
+              element={
+                <ProtectedRoute>
+                  <Pages />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pages/new"
+              element={
+                <ProtectedRoute>
+                  <PageForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pages/:id"
+              element={
+                <ProtectedRoute>
+                  <PageForm />
                 </ProtectedRoute>
               }
             />
