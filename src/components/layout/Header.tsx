@@ -42,6 +42,9 @@ const Header = () => {
 
         {/* CTA Button */}
         <div className="hidden items-center space-x-4 lg:flex">
+          <Button asChild variant="outline" size="sm">
+            <Link to="/auth">Admin</Link>
+          </Button>
           <Button asChild className="gradient-sunset">
             <Link to="/soutenir">Soutenir</Link>
           </Button>
