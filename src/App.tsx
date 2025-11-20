@@ -10,6 +10,12 @@ import Association from "./pages/Association";
 import NosActions from "./pages/NosActions";
 import Soutenir from "./pages/Soutenir";
 import Contact from "./pages/Contact";
+import Actualites from "./pages/Actualites";
+import Projets from "./pages/Projets";
+import Temoignages from "./pages/Temoignages";
+import FAQ from "./pages/FAQ";
+import MentionsLegales from "./pages/MentionsLegales";
+import PolitiqueConfidentialite from "./pages/PolitiqueConfidentialite";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/admin/Dashboard";
 import Posts from "./pages/admin/Posts";
@@ -30,6 +36,12 @@ const App = () => (
             <Route path="/nos-actions" element={<NosActions />} />
             <Route path="/soutenir" element={<Soutenir />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/actualites" element={<Actualites />} />
+            <Route path="/projets" element={<Projets />} />
+            <Route path="/temoignages" element={<Temoignages />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/mentions-legales" element={<MentionsLegales />} />
+            <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
             <Route path="/auth" element={<Auth />} />
             <Route
               path="/admin"
