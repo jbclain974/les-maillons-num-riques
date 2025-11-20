@@ -28,6 +28,8 @@ import Users from "./pages/admin/Users";
 import Settings from "./pages/admin/Settings";
 import Pages from "./pages/admin/Pages";
 import PageForm from "./pages/admin/PageForm";
+import Testimonials from "./pages/admin/Testimonials";
+import TestimonialForm from "./pages/admin/TestimonialForm";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -161,6 +163,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <PageForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/testimonials"
+              element={
+                <ProtectedRoute>
+                  <Testimonials />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/testimonials/new"
+              element={
+                <ProtectedRoute>
+                  <TestimonialForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/testimonials/:id"
+              element={
+                <ProtectedRoute>
+                  <TestimonialForm />
                 </ProtectedRoute>
               }
             />
