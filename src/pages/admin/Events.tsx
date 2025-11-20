@@ -1,46 +1,46 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Plus, Edit, Trash2, Calendar, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
-interface Post {
+interface Event {
   id: string;
   title: string;
-  slug: string;
-  excerpt: string | null;
-  category: string | null;
+  type: string;
+  start_date: string | null;
+  end_date: string | null;
+  location: string | null;
+  short_description: string | null;
   status: string;
-  published_at: string | null;
   created_at: string;
 }
 
-const Posts = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
+const Events = () => {
+  const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchPosts();
+    fetchEvents();
   }, []);
 
-  const fetchPosts = async () => {
+  const fetchEvents = async () => {
     try {
       const { data, error } = await supabase
-        .from("posts")
+        .from("events")
         .select("*")
-        .order("created_at", { ascending: false });
+        .order("start_date", { ascending: false });
 
       if (error) throw error;
-
-      setPosts(data || []);
+      setEvents(data || []);
     } catch (error: any) {
-      toast.error("Erreur lors du chargement des actualités");
+      toast.error("Erreur lors du chargement");
       console.error(error);
     } finally {
       setLoading(false);
@@ -48,15 +48,14 @@ const Posts = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Êtes-vous sûr de vouloir supprimer cette actualité ?")) return;
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cet événement ?")) return;
 
     try {
-      const { error } = await supabase.from("posts").delete().eq("id", id);
-
+      const { error } = await supabase.from("events").delete().eq("id", id);
       if (error) throw error;
 
-      toast.success("Actualité supprimée");
-      fetchPosts();
+      toast.success("Événement supprimé");
+      fetchEvents();
     } catch (error: any) {
       toast.error("Erreur lors de la suppression");
       console.error(error);
@@ -69,13 +68,11 @@ const Posts = () => {
       draft: "bg-yellow-100 text-yellow-800",
       archived: "bg-gray-100 text-gray-800",
     };
-
     const labels = {
       published: "Publié",
       draft: "Brouillon",
       archived: "Archivé",
     };
-
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${styles[status as keyof typeof styles]}`}>
         {labels[status as keyof typeof labels]}
@@ -98,62 +95,60 @@ const Posts = () => {
       <div className="p-8">
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Actualités</h1>
-            <p className="text-muted-foreground">Gérez les articles et actualités du site</p>
+            <h1 className="text-3xl font-bold">Projets & Événements</h1>
+            <p className="text-muted-foreground">Gérez les événements phares de l'association</p>
           </div>
-          <div className="flex gap-4">
-            <Button className="gradient-ocean" onClick={() => navigate("/admin/posts/new")}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nouvelle actualité
-            </Button>
-          </div>
+          <Button className="gradient-ocean" onClick={() => navigate("/admin/events/new")}>
+            <Plus className="mr-2 h-4 w-4" />
+            Nouvel événement
+          </Button>
         </div>
 
-        {posts.length === 0 ? (
+        {events.length === 0 ? (
           <Card>
             <CardContent className="p-12 text-center">
-              <p className="text-muted-foreground mb-4">Aucune actualité pour le moment</p>
-              <Button className="gradient-ocean" onClick={() => navigate("/admin/posts/new")}>
+              <p className="text-muted-foreground mb-4">Aucun événement pour le moment</p>
+              <Button className="gradient-ocean" onClick={() => navigate("/admin/events/new")}>
                 <Plus className="mr-2 h-4 w-4" />
-                Créer la première actualité
+                Créer le premier événement
               </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-4">
-            {posts.map((post) => (
-              <Card key={post.id} className="hover:shadow-lg transition-shadow">
+            {events.map((event) => (
+              <Card key={event.id} className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-xl font-semibold">{post.title}</h3>
-                        {getStatusBadge(post.status)}
+                        <h3 className="text-xl font-semibold">{event.title}</h3>
+                        {getStatusBadge(event.status)}
                       </div>
-                      {post.excerpt && (
-                        <p className="text-muted-foreground mb-3">{post.excerpt}</p>
+                      {event.short_description && (
+                        <p className="text-muted-foreground mb-3">{event.short_description}</p>
                       )}
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        {post.category && <span>Catégorie: {post.category}</span>}
-                        <span>
-                          Créé le {format(new Date(post.created_at), "d MMMM yyyy", { locale: fr })}
-                        </span>
-                        {post.published_at && (
-                          <span>
-                            Publié le {format(new Date(post.published_at), "d MMMM yyyy", { locale: fr })}
+                      <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                        <span className="capitalize">{event.type.replace("_", " ")}</span>
+                        {event.start_date && (
+                          <span className="flex items-center">
+                            <Calendar className="h-4 w-4 mr-1" />
+                            {format(new Date(event.start_date), "d MMM yyyy", { locale: fr })}
+                          </span>
+                        )}
+                        {event.location && (
+                          <span className="flex items-center">
+                            <MapPin className="h-4 w-4 mr-1" />
+                            {event.location}
                           </span>
                         )}
                       </div>
                     </div>
                     <div className="flex gap-2 ml-4">
-                      <Button variant="outline" size="sm" onClick={() => navigate(`/admin/posts/${post.id}`)}>
+                      <Button variant="outline" size="sm" onClick={() => navigate(`/admin/events/${event.id}`)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(post.id)}
-                      >
+                      <Button variant="outline" size="sm" onClick={() => handleDelete(event.id)}>
                         <Trash2 className="h-4 w-4 text-destructive" />
                       </Button>
                     </div>
@@ -168,4 +163,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Events;
