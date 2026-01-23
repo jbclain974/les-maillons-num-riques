@@ -23,6 +23,7 @@ import PostForm from "./pages/admin/PostForm";
 import Events from "./pages/admin/Events";
 import EventForm from "./pages/admin/EventForm";
 import Activities from "./pages/admin/Activities";
+import ActivityForm from "./pages/admin/ActivityForm";
 import Messages from "./pages/admin/Messages";
 import Users from "./pages/admin/Users";
 import Settings from "./pages/admin/Settings";
@@ -115,6 +116,22 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Activities />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/activities/new"
+              element={
+                <ProtectedRoute>
+                  <ActivityForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/activities/:id"
+              element={
+                <ProtectedRoute>
+                  <ActivityForm />
                 </ProtectedRoute>
               }
             />
