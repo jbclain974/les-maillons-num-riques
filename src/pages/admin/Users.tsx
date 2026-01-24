@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Shield, UserCog } from "lucide-react";
+import { sanitizeError } from "@/lib/errorSanitizer";
 
 interface Profile {
   id: string;
@@ -53,8 +54,7 @@ const Users = () => {
       });
       setRoles(rolesMap);
     } catch (error: any) {
-      toast.error("Erreur lors du chargement");
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setLoading(false);
     }
@@ -75,8 +75,7 @@ const Users = () => {
       toast.success("Rôle mis à jour");
       fetchUsersAndRoles();
     } catch (error: any) {
-      toast.error("Erreur lors de la mise à jour");
-      console.error(error);
+      toast.error(sanitizeError(error));
     }
   };
 

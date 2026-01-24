@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
 
 const PostForm = () => {
   const { id } = useParams();
@@ -79,20 +80,16 @@ const PostForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (!file.type.startsWith("image/")) {
-      toast.error("Veuillez sélectionner une image");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("L'image ne doit pas dépasser 5 MB");
+    // Validate file before upload
+    const validation = validateFileUpload(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
       return;
     }
 
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const fileName = generateSecureFilename(file.name);
       const filePath = `posts/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -108,8 +105,7 @@ const PostForm = () => {
       setFormData({ ...formData, cover_image: publicUrl });
       toast.success("Image téléchargée");
     } catch (error: any) {
-      toast.error("Erreur lors de l'upload");
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setUploading(false);
     }
@@ -147,8 +143,7 @@ const PostForm = () => {
 
       navigate("/admin/posts");
     } catch (error: any) {
-      toast.error(error.message);
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setLoading(false);
     }

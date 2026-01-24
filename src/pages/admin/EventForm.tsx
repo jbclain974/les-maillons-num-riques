@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
 
 const EventForm = () => {
   const { id } = useParams();
@@ -77,10 +78,16 @@ const EventForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file before upload
+    const validation = validateFileUpload(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      return;
+    }
+
     setUploading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Date.now()}.${fileExt}`;
+      const fileName = generateSecureFilename(file.name);
       const filePath = `events/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -96,8 +103,7 @@ const EventForm = () => {
       setFormData({ ...formData, cover_image: publicUrl });
       toast.success("Image téléchargée");
     } catch (error: any) {
-      toast.error("Erreur lors de l'upload");
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setUploading(false);
     }
@@ -136,8 +142,7 @@ const EventForm = () => {
 
       navigate("/admin/events");
     } catch (error: any) {
-      toast.error(error.message);
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setLoading(false);
     }

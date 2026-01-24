@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import AdminRoute from "@/components/auth/AdminRoute";
 import Home from "./pages/Home";
 import Association from "./pages/Association";
 import NosActions from "./pages/NosActions";
@@ -55,156 +55,165 @@ const App = () => (
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
             <Route path="/auth" element={<Auth />} />
+            {/* Admin routes - Dashboard accessible by all roles */}
             <Route
               path="/admin"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <Dashboard />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Posts - admin and editor only */}
             <Route
               path="/admin/posts"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <Posts />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/posts/new"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <PostForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/posts/:id"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <PostForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Events - admin, editor, and animator */}
             <Route
               path="/admin/events"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <Events />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/events/new"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <EventForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/events/:id"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <EventForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Activities - admin, editor, and animator */}
             <Route
               path="/admin/activities"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <Activities />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/activities/new"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <ActivityForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/activities/:id"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <ActivityForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Messages - admin and editor only */}
             <Route
               path="/admin/messages"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <Messages />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Users - admin only */}
             <Route
               path="/admin/users"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin']}>
                   <Users />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Settings - admin only */}
             <Route
               path="/admin/settings"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin']}>
                   <Settings />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Pages - admin and editor only */}
             <Route
               path="/admin/pages"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <Pages />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/pages/new"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <PageForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/pages/:id"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <PageForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
+            {/* Testimonials - admin and editor only */}
             <Route
               path="/admin/testimonials"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <Testimonials />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/testimonials/new"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <TestimonialForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             <Route
               path="/admin/testimonials/:id"
               element={
-                <ProtectedRoute>
+                <AdminRoute allowedRoles={['admin', 'editor']}>
                   <TestimonialForm />
-                </ProtectedRoute>
+                </AdminRoute>
               }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

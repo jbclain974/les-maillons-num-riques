@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import { sanitizeError } from "@/lib/errorSanitizer";
 
 const DAYS_OF_WEEK = [
   { value: "lundi", label: "Lundi" },
@@ -132,8 +133,7 @@ const ActivityForm = () => {
 
       navigate("/admin/activities");
     } catch (error: any) {
-      toast.error(error.message);
-      console.error(error);
+      toast.error(sanitizeError(error));
     } finally {
       setLoading(false);
     }
