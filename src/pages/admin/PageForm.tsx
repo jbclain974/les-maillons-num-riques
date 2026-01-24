@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { sanitizeError } from "@/lib/errorSanitizer";
 
 interface PageFormData {
   title: string;
@@ -93,10 +94,10 @@ const PageForm = () => {
       });
       navigate("/admin/pages");
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder la page",
+        description: sanitizeError(error),
         variant: "destructive",
       });
     },

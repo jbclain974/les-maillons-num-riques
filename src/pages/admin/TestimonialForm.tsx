@@ -9,10 +9,11 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, ArrowLeft, Upload } from "lucide-react";
+import { Loader2, ArrowLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
 
 interface TestimonialFormData {
   display_name: string;
@@ -80,12 +81,22 @@ const TestimonialForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file before upload
+    const validation = validateFileUpload(file);
+    if (!validation.valid) {
+      toast({
+        title: "Erreur",
+        description: validation.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
     setPhotoFile(file);
     setUploading(true);
 
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${Math.random()}.${fileExt}`;
+      const fileName = `testimonials/${generateSecureFilename(file.name)}`;
       const { error: uploadError } = await supabase.storage
         .from("media")
         .upload(fileName, file);
@@ -104,7 +115,7 @@ const TestimonialForm = () => {
     } catch (error) {
       toast({
         title: "Erreur",
-        description: "Impossible de télécharger la photo",
+        description: sanitizeError(error),
         variant: "destructive",
       });
     } finally {
@@ -135,10 +146,10 @@ const TestimonialForm = () => {
       });
       navigate("/admin/testimonials");
     },
-    onError: () => {
+    onError: (error: any) => {
       toast({
         title: "Erreur",
-        description: "Impossible de sauvegarder le témoignage",
+        description: sanitizeError(error),
         variant: "destructive",
       });
     },
