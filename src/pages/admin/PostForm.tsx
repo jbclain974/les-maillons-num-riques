@@ -6,13 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, X, Upload } from "lucide-react";
 import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
 import { ValidationWorkflow, ValidationStatus } from "@/components/admin/ValidationWorkflow";
 import { useAuth } from "@/lib/auth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const PostForm = () => {
   const { id } = useParams();
@@ -340,30 +351,59 @@ const PostForm = () => {
           <Card>
             <CardHeader>
               <CardTitle>Image de couverture</CardTitle>
+              <CardDescription>
+                Une image attrayante pour illustrer l'actualité
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="image">Télécharger une image</Label>
-                <Input
-                  id="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={uploading}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Format: JPG, PNG, WEBP, GIF - Max: 5 MB
-                </p>
-              </div>
-
-              {formData.cover_image && (
-                <div className="space-y-2">
-                  <Label>Aperçu</Label>
-                  <img
-                    src={formData.cover_image}
-                    alt="Aperçu"
-                    className="max-w-md rounded-lg border"
-                  />
+              {formData.cover_image ? (
+                <div className="space-y-4">
+                  <div className="relative inline-block">
+                    <img
+                      src={formData.cover_image}
+                      alt="Aperçu"
+                      className="max-w-md rounded-lg border"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={() => setFormData({ ...formData, cover_image: "" })}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Cliquez sur le X pour supprimer l'image
+                  </p>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                  <Upload className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
+                  <div className="space-y-2">
+                    <Label htmlFor="image" className="cursor-pointer">
+                      <span className="text-primary hover:underline">Cliquez pour télécharger</span>
+                      <span className="text-muted-foreground"> ou glissez-déposez</span>
+                    </Label>
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      JPG, PNG, WEBP, GIF - Max 5 MB
+                    </p>
+                  </div>
+                  {uploading && (
+                    <div className="mt-4 flex items-center justify-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm">Téléchargement...</span>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

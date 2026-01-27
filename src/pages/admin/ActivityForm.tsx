@@ -6,13 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, Save, Calendar, Clock, MapPin, Users } from "lucide-react";
 import { sanitizeError } from "@/lib/errorSanitizer";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const DAYS_OF_WEEK = [
   { value: "lundi", label: "Lundi" },
@@ -37,6 +48,7 @@ const ActivityForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -92,6 +104,26 @@ const ActivityForm = () => {
     setFormData({ ...formData, days_of_week: newDays });
   };
 
+  const handleDelete = async () => {
+    if (!id) return;
+    
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("activities")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Atelier supprimé");
+      navigate("/admin/activities");
+    } catch (error: any) {
+      toast.error(sanitizeError(error));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -142,28 +174,69 @@ const ActivityForm = () => {
   return (
     <AdminLayout>
       <div className="p-8">
-        <Button variant="ghost" onClick={() => navigate("/admin/activities")} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour aux ateliers
-        </Button>
-
-        <h1 className="text-3xl font-bold mb-8">
-          {id ? "Modifier l'atelier" : "Nouvel atelier"}
-        </h1>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/admin/activities")}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {id ? "Modifier l'atelier" : "Nouvel atelier"}
+              </h1>
+              <p className="text-muted-foreground">
+                {id ? "Modifiez les détails de l'atelier" : "Créez un nouvel atelier ou action"}
+              </p>
+            </div>
+          </div>
+          {id && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="icon" disabled={deleting}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Supprimer l'atelier</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Êtes-vous sûr de vouloir supprimer cet atelier ? Cette action est irréversible.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Supprimer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
 
         <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Informations principales</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Informations principales
+              </CardTitle>
+              <CardDescription>
+                Les informations de base de l'atelier
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="title">Titre *</Label>
+                  <Label htmlFor="title">Titre de l'atelier *</Label>
                   <Input
                     id="title"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    placeholder="Ex: Marche nordique"
                     required
                   />
                 </div>
@@ -190,7 +263,10 @@ const ActivityForm = () => {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="location">Lieu</Label>
+                  <Label htmlFor="location" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Lieu
+                  </Label>
                   <Input
                     id="location"
                     value={formData.location}
@@ -200,7 +276,10 @@ const ActivityForm = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="facilitator">Animateur</Label>
+                  <Label htmlFor="facilitator" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Animateur
+                  </Label>
                   <Input
                     id="facilitator"
                     value={formData.facilitator}
@@ -220,15 +299,23 @@ const ActivityForm = () => {
                     onChange={(e) => setFormData({ ...formData, capacity_max: e.target.value })}
                     placeholder="20"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Laissez vide pour une capacité illimitée
+                  </p>
                 </div>
 
-                <div className="flex items-center gap-2 pt-8">
+                <div className="flex items-center gap-4 pt-6">
                   <Switch
                     id="is_active"
                     checked={formData.is_active}
                     onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                   />
-                  <Label htmlFor="is_active">Atelier actif</Label>
+                  <Label htmlFor="is_active" className="cursor-pointer">
+                    <span className="font-medium">Atelier actif</span>
+                    <p className="text-xs text-muted-foreground">
+                      Les ateliers inactifs n'apparaissent pas sur le site
+                    </p>
+                  </Label>
                 </div>
               </div>
 
@@ -239,6 +326,7 @@ const ActivityForm = () => {
                   value={formData.description_short}
                   onChange={(e) => setFormData({ ...formData, description_short: e.target.value })}
                   rows={2}
+                  placeholder="Un résumé en 1-2 phrases..."
                 />
               </div>
 
@@ -249,6 +337,7 @@ const ActivityForm = () => {
                   value={formData.description_long}
                   onChange={(e) => setFormData({ ...formData, description_long: e.target.value })}
                   rows={6}
+                  placeholder="Description complète de l'atelier, objectifs, déroulement..."
                 />
               </div>
             </CardContent>
@@ -256,20 +345,34 @@ const ActivityForm = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Horaires</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Horaires
+              </CardTitle>
+              <CardDescription>
+                Définissez les jours et heures de l'atelier
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label>Jours de la semaine</Label>
-                <div className="flex flex-wrap gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                   {DAYS_OF_WEEK.map((day) => (
-                    <div key={day.value} className="flex items-center gap-2">
+                    <div
+                      key={day.value}
+                      className={`flex items-center gap-2 p-3 border rounded-lg cursor-pointer transition-colors ${
+                        formData.days_of_week.includes(day.value)
+                          ? "bg-primary/10 border-primary"
+                          : "hover:bg-muted"
+                      }`}
+                      onClick={() => handleDayToggle(day.value)}
+                    >
                       <Checkbox
                         id={day.value}
                         checked={formData.days_of_week.includes(day.value)}
                         onCheckedChange={() => handleDayToggle(day.value)}
                       />
-                      <Label htmlFor={day.value} className="cursor-pointer">
+                      <Label htmlFor={day.value} className="cursor-pointer flex-1">
                         {day.label}
                       </Label>
                     </div>
@@ -301,19 +404,22 @@ const ActivityForm = () => {
             </CardContent>
           </Card>
 
-          <div className="flex gap-4">
-            <Button type="submit" className="gradient-ocean" disabled={loading}>
+          <div className="flex justify-between items-center">
+            <Button type="button" variant="outline" onClick={() => navigate("/admin/activities")}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={loading} className="gap-2">
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Enregistrement...
                 </>
               ) : (
-                <>{id ? "Mettre à jour" : "Créer l'atelier"}</>
+                <>
+                  <Save className="h-4 w-4" />
+                  {id ? "Enregistrer les modifications" : "Créer l'atelier"}
+                </>
               )}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => navigate("/admin/activities")}>
-              Annuler
             </Button>
           </div>
         </form>
