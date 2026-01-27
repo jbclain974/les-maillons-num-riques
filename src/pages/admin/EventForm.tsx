@@ -6,13 +6,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { ArrowLeft, Loader2, Trash2, X, Upload, Save, Calendar, MapPin } from "lucide-react";
 import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
 import { ValidationWorkflow, ValidationStatus } from "@/components/admin/ValidationWorkflow";
 import { useAuth } from "@/lib/auth";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const EventForm = () => {
   const { id } = useParams();
@@ -20,6 +31,7 @@ const EventForm = () => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -87,7 +99,6 @@ const EventForm = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file before upload
     const validation = validateFileUpload(file);
     if (!validation.valid) {
       toast.error(validation.error);
@@ -115,6 +126,26 @@ const EventForm = () => {
       toast.error(sanitizeError(error));
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!id) return;
+    
+    setDeleting(true);
+    try {
+      const { error } = await supabase
+        .from("events")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+      toast.success("Événement supprimé");
+      navigate("/admin/events");
+    } catch (error: any) {
+      toast.error(sanitizeError(error));
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -150,7 +181,6 @@ const EventForm = () => {
 
       if (error) throw error;
 
-      // Log validation history
       await supabase.from("validation_history").insert({
         content_type: 'event',
         content_id: id,
@@ -221,23 +251,63 @@ const EventForm = () => {
   return (
     <AdminLayout>
       <div className="p-8">
-        <Button variant="ghost" onClick={() => navigate("/admin/events")} className="mb-4">
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Retour aux événements
-        </Button>
-
-        <h1 className="text-3xl font-bold mb-8">
-          {id ? "Modifier l'événement" : "Nouvel événement"}
-        </h1>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/admin/events")}>
+              <ArrowLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-bold">
+                {id ? "Modifier l'événement" : "Nouvel événement"}
+              </h1>
+              <p className="text-muted-foreground">
+                {id ? "Modifiez les détails de l'événement" : "Créez un nouvel événement ou projet"}
+              </p>
+            </div>
+          </div>
+          {id && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive" size="icon" disabled={deleting}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Supprimer l'événement</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Êtes-vous sûr de vouloir supprimer cet événement ? Cette action est irréversible.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Supprimer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+        </div>
 
         <form onSubmit={handleSubmit} className="max-w-4xl space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Informations principales</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Informations principales
+              </CardTitle>
+              <CardDescription>
+                Les informations de base de l'événement
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="title">Titre *</Label>
+                <Label htmlFor="title">Titre de l'événement *</Label>
                 <Input
                   id="title"
                   value={formData.title}
@@ -249,18 +319,23 @@ const EventForm = () => {
                       slug: generateSlug(title),
                     });
                   }}
+                  placeholder="Ex: Grand Raid 2024"
                   required
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="slug">Slug *</Label>
-                <Input
-                  id="slug"
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  required
-                />
+                <Label htmlFor="slug">URL de l'événement *</Label>
+                <div className="flex gap-2 items-center">
+                  <span className="text-sm text-muted-foreground">/projets/</span>
+                  <Input
+                    id="slug"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    required
+                    className="flex-1"
+                  />
+                </div>
               </div>
 
               <div className="grid gap-6 md:grid-cols-3">
@@ -278,6 +353,7 @@ const EventForm = () => {
                       <SelectItem value="grand_raid">Grand Raid</SelectItem>
                       <SelectItem value="diner">Dîner Dansant</SelectItem>
                       <SelectItem value="loto">Loto Quine</SelectItem>
+                      <SelectItem value="randonnee">Randonnée</SelectItem>
                       <SelectItem value="autre">Autre</SelectItem>
                     </SelectContent>
                   </Select>
@@ -306,7 +382,10 @@ const EventForm = () => {
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="location">Lieu</Label>
+                  <Label htmlFor="location" className="flex items-center gap-2">
+                    <MapPin className="h-4 w-4" />
+                    Lieu
+                  </Label>
                   <Input
                     id="location"
                     value={formData.location}
@@ -341,6 +420,7 @@ const EventForm = () => {
                   value={formData.short_description}
                   onChange={(e) => setFormData({ ...formData, short_description: e.target.value })}
                   rows={2}
+                  placeholder="Résumé en 1-2 phrases pour les listes..."
                 />
               </div>
 
@@ -351,6 +431,7 @@ const EventForm = () => {
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                   rows={10}
+                  placeholder="Description complète de l'événement, programme, informations pratiques..."
                 />
               </div>
 
@@ -381,37 +462,80 @@ const EventForm = () => {
           <Card>
             <CardHeader>
               <CardTitle>Image de couverture</CardTitle>
+              <CardDescription>
+                Une image pour illustrer l'événement
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                disabled={uploading}
-              />
-              {formData.cover_image && (
-                <img
-                  src={formData.cover_image}
-                  alt="Aperçu"
-                  className="max-w-md rounded-lg"
-                />
+              {formData.cover_image ? (
+                <div className="space-y-4">
+                  <div className="relative inline-block">
+                    <img
+                      src={formData.cover_image}
+                      alt="Aperçu"
+                      className="max-w-md rounded-lg border"
+                    />
+                    <Button
+                      type="button"
+                      variant="destructive"
+                      size="icon"
+                      className="absolute top-2 right-2"
+                      onClick={() => setFormData({ ...formData, cover_image: "" })}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Cliquez sur le X pour supprimer l'image
+                  </p>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                  <Upload className="h-10 w-10 mx-auto mb-4 text-muted-foreground" />
+                  <div className="space-y-2">
+                    <Label htmlFor="image" className="cursor-pointer">
+                      <span className="text-primary hover:underline">Cliquez pour télécharger</span>
+                      <span className="text-muted-foreground"> ou glissez-déposez</span>
+                    </Label>
+                    <Input
+                      id="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      disabled={uploading}
+                      className="hidden"
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      JPG, PNG, WEBP, GIF - Max 5 MB
+                    </p>
+                  </div>
+                  {uploading && (
+                    <div className="mt-4 flex items-center justify-center gap-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm">Téléchargement...</span>
+                    </div>
+                  )}
+                </div>
               )}
             </CardContent>
           </Card>
 
-          <div className="flex gap-4">
-            <Button type="submit" className="gradient-ocean" disabled={loading || uploading}>
+          <div className="flex justify-between items-center">
+            <Button type="button" variant="outline" onClick={() => navigate("/admin/events")}>
+              Annuler
+            </Button>
+            <Button type="submit" disabled={loading || uploading} className="gap-2">
               {loading ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Enregistrement...
                 </>
               ) : (
-                <>{id ? "Mettre à jour" : "Créer l'événement"}</>
+                <>
+                  <Save className="h-4 w-4" />
+                  {id ? "Enregistrer les modifications" : "Créer l'événement"}
+                </>
               )}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => navigate("/admin/events")}>
-              Annuler
             </Button>
           </div>
         </form>

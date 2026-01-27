@@ -34,6 +34,7 @@ import Testimonials from "./pages/admin/Testimonials";
 import TestimonialForm from "./pages/admin/TestimonialForm";
 import Permissions from "./pages/admin/Permissions";
 import ValidationQueue from "./pages/admin/ValidationQueue";
+import Media from "./pages/admin/Media";
 import MemberDashboard from "./pages/member/MemberDashboard";
 import MemberProfile from "./pages/member/MemberProfile";
 import Community from "./pages/member/Community";
@@ -275,6 +276,15 @@ const App = () => (
               element={
                 <AdminRoute allowedRoles={['admin', 'editor']}>
                   <PageForm />
+                </AdminRoute>
+              }
+            />
+            {/* Media - admin and editor only */}
+            <Route
+              path="/admin/media"
+              element={
+                <AdminRoute allowedRoles={['admin', 'editor']}>
+                  <Media />
                 </AdminRoute>
               }
             />
