@@ -35,6 +35,8 @@ import TestimonialForm from "./pages/admin/TestimonialForm";
 import Permissions from "./pages/admin/Permissions";
 import ValidationQueue from "./pages/admin/ValidationQueue";
 import Media from "./pages/admin/Media";
+import NavigationManager from "./pages/admin/NavigationManager";
+import HomepageManager from "./pages/admin/HomepageManager";
 import MemberDashboard from "./pages/member/MemberDashboard";
 import MemberProfile from "./pages/member/MemberProfile";
 import Community from "./pages/member/Community";
@@ -285,6 +287,24 @@ const App = () => (
               element={
                 <AdminRoute allowedRoles={['admin', 'editor']}>
                   <Media />
+                </AdminRoute>
+              }
+            />
+            {/* Navigation Manager - admin only */}
+            <Route
+              path="/admin/navigation"
+              element={
+                <AdminRoute allowedRoles={['admin']}>
+                  <NavigationManager />
+                </AdminRoute>
+              }
+            />
+            {/* Homepage Manager - admin only */}
+            <Route
+              path="/admin/homepage"
+              element={
+                <AdminRoute allowedRoles={['admin']}>
+                  <HomepageManager />
                 </AdminRoute>
               }
             />

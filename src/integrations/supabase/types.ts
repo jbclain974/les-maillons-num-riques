@@ -416,6 +416,42 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_sections: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          section_key: string
+          settings: Json | null
+          subtitle: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          section_key: string
+          settings?: Json | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          section_key?: string
+          settings?: Json | null
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       media: {
         Row: {
           alt_text: string | null
@@ -500,6 +536,53 @@ export type Database = {
             columns: ["uploaded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      navigation_items: {
+        Row: {
+          created_at: string | null
+          icon: string | null
+          id: string
+          is_visible: boolean | null
+          label: string
+          parent_id: string | null
+          position: number | null
+          target: string | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          label: string
+          parent_id?: string | null
+          position?: number | null
+          target?: string | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          is_visible?: boolean | null
+          label?: string
+          parent_id?: string | null
+          position?: number | null
+          target?: string | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "navigation_items_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "navigation_items"
             referencedColumns: ["id"]
           },
         ]
@@ -740,6 +823,45 @@ export type Database = {
           key?: string
           updated_at?: string
           value?: string | null
+        }
+        Relationships: []
+      }
+      site_statistics: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_visible: boolean | null
+          label: string
+          position: number | null
+          section: string | null
+          stat_key: string
+          suffix: string | null
+          updated_at: string | null
+          value: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          label: string
+          position?: number | null
+          section?: string | null
+          stat_key: string
+          suffix?: string | null
+          updated_at?: string | null
+          value: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_visible?: boolean | null
+          label?: string
+          position?: number | null
+          section?: string | null
+          stat_key?: string
+          suffix?: string | null
+          updated_at?: string | null
+          value?: string
         }
         Relationships: []
       }
