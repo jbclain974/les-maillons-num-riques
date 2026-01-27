@@ -37,6 +37,7 @@ import ValidationQueue from "./pages/admin/ValidationQueue";
 import Media from "./pages/admin/Media";
 import NavigationManager from "./pages/admin/NavigationManager";
 import HomepageManager from "./pages/admin/HomepageManager";
+import ActionsManager from "./pages/admin/ActionsManager";
 import MemberDashboard from "./pages/member/MemberDashboard";
 import MemberProfile from "./pages/member/MemberProfile";
 import Community from "./pages/member/Community";
@@ -305,6 +306,15 @@ const App = () => (
               element={
                 <AdminRoute allowedRoles={['admin']}>
                   <HomepageManager />
+                </AdminRoute>
+              }
+            />
+            {/* Actions Manager - admin only */}
+            <Route
+              path="/admin/actions"
+              element={
+                <AdminRoute allowedRoles={['admin']}>
+                  <ActionsManager />
                 </AdminRoute>
               }
             />

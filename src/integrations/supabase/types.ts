@@ -416,6 +416,45 @@ export type Database = {
         }
         Relationships: []
       }
+      homepage_actions: {
+        Row: {
+          color_class: string
+          created_at: string | null
+          description: string | null
+          icon: string
+          id: string
+          is_visible: boolean
+          link_anchor: string | null
+          position: number
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          color_class?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string
+          id?: string
+          is_visible?: boolean
+          link_anchor?: string | null
+          position?: number
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          color_class?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string
+          id?: string
+          is_visible?: boolean
+          link_anchor?: string | null
+          position?: number
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       homepage_sections: {
         Row: {
           content: string | null
