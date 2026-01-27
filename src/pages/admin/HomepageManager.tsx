@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { Loader2, Save, Eye, EyeOff } from "lucide-react";
+import { Loader2, Save, Eye, EyeOff, Upload, Image } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface HomepageSection {
@@ -43,6 +43,8 @@ const sectionLabels: Record<string, string> = {
 const HomepageManager = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const { data: sections, isLoading: sectionsLoading } = useQuery({
     queryKey: ["homepage-sections"],
@@ -67,6 +69,64 @@ const HomepageManager = () => {
       return data as SiteStatistic[];
     },
   });
+
+  const { data: heroSetting, isLoading: heroLoading } = useQuery({
+    queryKey: ["hero-image-setting"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("site_settings")
+        .select("*")
+        .eq("key", "hero_image_url")
+        .single();
+      if (error && error.code !== "PGRST116") throw error;
+      return data;
+    },
+  });
+
+  // Sync local state with fetched data
+  useState(() => {
+    if (heroSetting?.value) {
+      setHeroImageUrl(heroSetting.value);
+    }
+  });
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingImage(true);
+    try {
+      const fileExt = file.name.split(".").pop();
+      const fileName = `hero-${Date.now()}.${fileExt}`;
+      const filePath = `homepage/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("media")
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrl } = supabase.storage.from("media").getPublicUrl(filePath);
+      const url = publicUrl.publicUrl;
+
+      // Save to site_settings
+      const { error: updateError } = await supabase
+        .from("site_settings")
+        .update({ value: url })
+        .eq("key", "hero_image_url");
+
+      if (updateError) throw updateError;
+
+      setHeroImageUrl(url);
+      queryClient.invalidateQueries({ queryKey: ["hero-image-url"] });
+      toast({ title: "Image mise à jour" });
+    } catch (err) {
+      console.error("Upload error:", err);
+      toast({ title: "Erreur lors de l'upload", variant: "destructive" });
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
 
   const updateSectionMutation = useMutation({
     mutationFn: async (section: { id: string; title?: string | null; content?: string | null; is_visible?: boolean }) => {
@@ -153,7 +213,7 @@ const HomepageManager = () => {
     return editedStats[stat.id]?.[field] ?? stat[field];
   };
 
-  const isLoading = sectionsLoading || statsLoading;
+  const isLoading = sectionsLoading || statsLoading || heroLoading;
 
   return (
     <AdminLayout>
@@ -166,6 +226,52 @@ const HomepageManager = () => {
           </div>
         ) : (
           <>
+            {/* Image du Hero */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  Image de fond du Hero
+                </CardTitle>
+                <CardDescription>
+                  Uploadez une nouvelle image pour le fond de la section principale de la page d'accueil.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {(heroImageUrl || heroSetting?.value) && (
+                  <div className="relative w-full max-w-md rounded-lg overflow-hidden border">
+                    <img
+                      src={heroImageUrl || heroSetting?.value}
+                      alt="Hero preview"
+                      className="w-full h-48 object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <Label htmlFor="hero-image" className="cursor-pointer">
+                    <div className="flex items-center gap-2">
+                      <Button asChild disabled={isUploadingImage}>
+                        <span>
+                          {isUploadingImage ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Upload className="h-4 w-4 mr-2" />
+                          )}
+                          Changer l'image
+                        </span>
+                      </Button>
+                    </div>
+                  </Label>
+                  <input
+                    id="hero-image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
+                  />
+                </div>
+              </CardContent>
+            </Card>
             {/* Statistiques */}
             <Card>
               <CardHeader>

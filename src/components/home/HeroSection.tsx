@@ -1,13 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart } from "lucide-react";
-import heroImage from "@/assets/hero-home.jpg";
+import heroImageDefault from "@/assets/hero-home.jpg";
 import { useHomepageSections, useSiteStatistics } from "@/hooks/useSiteContent";
+import { useHeroImageUrl } from "@/hooks/useHomepageActions";
 
 const HeroSection = () => {
   const { data: sections } = useHomepageSections();
   const { data: heroStats } = useSiteStatistics("hero");
   const { data: badgeStats } = useSiteStatistics("hero_badge");
+  const { data: heroImageUrl } = useHeroImageUrl();
 
   const heroBadge = sections?.hero_badge;
   const heroMain = sections?.hero_main;
@@ -91,7 +93,7 @@ const HeroSection = () => {
           <div className="relative">
             <div className="relative overflow-hidden rounded-2xl shadow-2xl">
               <img
-                src={heroImage}
+                src={heroImageUrl || heroImageDefault}
                 alt="Solidarité et espoir à La Réunion"
                 className="h-full w-full object-cover"
               />
