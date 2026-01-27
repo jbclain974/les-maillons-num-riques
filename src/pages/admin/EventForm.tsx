@@ -11,10 +11,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
+import { ValidationWorkflow, ValidationStatus } from "@/components/admin/ValidationWorkflow";
+import { useAuth } from "@/lib/auth";
 
 const EventForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -30,6 +33,9 @@ const EventForm = () => {
     cover_image: "",
     video_url: "",
     status: "draft" as "draft" | "published",
+    validation_status: "draft" as ValidationStatus,
+    review_notes: null as string | null,
+    rejection_reason: null as string | null,
   });
 
   useEffect(() => {
@@ -58,6 +64,9 @@ const EventForm = () => {
         cover_image: data.cover_image || "",
         video_url: data.video_url || "",
         status: (data.status === "archived" ? "draft" : data.status) as "draft" | "published",
+        validation_status: (data.validation_status || "draft") as ValidationStatus,
+        review_notes: data.review_notes,
+        rejection_reason: data.rejection_reason,
       });
     } catch (error: any) {
       toast.error("Erreur lors du chargement");
@@ -109,6 +118,55 @@ const EventForm = () => {
     }
   };
 
+  const handleValidationChange = async (newStatus: ValidationStatus, notes?: string) => {
+    if (!id || !user) return;
+
+    try {
+      const updateData: any = {
+        validation_status: newStatus,
+      };
+
+      if (newStatus === 'pending_editor') {
+        updateData.submitted_by = user.id;
+        updateData.submitted_at = new Date().toISOString();
+      } else if (newStatus === 'pending_admin') {
+        updateData.reviewed_by = user.id;
+        updateData.reviewed_at = new Date().toISOString();
+        updateData.review_notes = notes;
+      } else if (newStatus === 'published') {
+        updateData.validated_by = user.id;
+        updateData.validated_at = new Date().toISOString();
+        updateData.status = 'published';
+      } else if (newStatus === 'rejected') {
+        updateData.rejection_reason = notes;
+      } else if (newStatus === 'draft') {
+        updateData.status = 'draft';
+      }
+
+      const { error } = await supabase
+        .from("events")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      // Log validation history
+      await supabase.from("validation_history").insert({
+        content_type: 'event',
+        content_id: id,
+        from_status: formData.validation_status,
+        to_status: newStatus,
+        action_by: user.id,
+        notes,
+      });
+
+      toast.success("Statut mis à jour");
+      fetchEvent();
+    } catch (error: any) {
+      toast.error(sanitizeError(error));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -120,7 +178,15 @@ const EventForm = () => {
     setLoading(true);
     try {
       const eventData = {
-        ...formData,
+        title: formData.title,
+        slug: formData.slug,
+        type: formData.type,
+        location: formData.location,
+        short_description: formData.short_description,
+        content: formData.content,
+        cover_image: formData.cover_image,
+        video_url: formData.video_url,
+        status: formData.status,
         start_date: formData.start_date || null,
         end_date: formData.end_date || null,
       };
@@ -134,7 +200,11 @@ const EventForm = () => {
         if (error) throw error;
         toast.success("Événement mis à jour");
       } else {
-        const { error } = await supabase.from("events").insert([eventData]);
+        const { error } = await supabase.from("events").insert([{
+          ...eventData,
+          validation_status: 'draft',
+          submitted_by: user?.id,
+        }]);
 
         if (error) throw error;
         toast.success("Événement créé");
@@ -296,6 +366,17 @@ const EventForm = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Validation Workflow - only show for existing events */}
+          {id && (
+            <ValidationWorkflow
+              currentStatus={formData.validation_status}
+              onStatusChange={handleValidationChange}
+              contentType="event"
+              reviewNotes={formData.review_notes}
+              rejectionReason={formData.rejection_reason}
+            />
+          )}
 
           <Card>
             <CardHeader>

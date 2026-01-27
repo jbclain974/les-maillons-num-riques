@@ -11,10 +11,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { sanitizeError, validateFileUpload, generateSecureFilename } from "@/lib/errorSanitizer";
+import { ValidationWorkflow, ValidationStatus } from "@/components/admin/ValidationWorkflow";
+import { useAuth } from "@/lib/auth";
 
 const PostForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
@@ -26,6 +29,9 @@ const PostForm = () => {
     category: "",
     cover_image: "",
     status: "draft" as "draft" | "published",
+    validation_status: "draft" as ValidationStatus,
+    review_notes: null as string | null,
+    rejection_reason: null as string | null,
   });
 
   useEffect(() => {
@@ -52,6 +58,9 @@ const PostForm = () => {
         category: data.category || "",
         cover_image: data.cover_image || "",
         status: (data.status === "archived" ? "draft" : data.status) as "draft" | "published",
+        validation_status: (data.validation_status || "draft") as ValidationStatus,
+        review_notes: data.review_notes,
+        rejection_reason: data.rejection_reason,
       });
     } catch (error: any) {
       toast.error("Erreur lors du chargement");
@@ -111,6 +120,56 @@ const PostForm = () => {
     }
   };
 
+  const handleValidationChange = async (newStatus: ValidationStatus, notes?: string) => {
+    if (!id || !user) return;
+
+    try {
+      const updateData: any = {
+        validation_status: newStatus,
+      };
+
+      if (newStatus === 'pending_editor') {
+        updateData.submitted_by = user.id;
+        updateData.submitted_at = new Date().toISOString();
+      } else if (newStatus === 'pending_admin') {
+        updateData.reviewed_by = user.id;
+        updateData.reviewed_at = new Date().toISOString();
+        updateData.review_notes = notes;
+      } else if (newStatus === 'published') {
+        updateData.validated_by = user.id;
+        updateData.validated_at = new Date().toISOString();
+        updateData.status = 'published';
+        updateData.published_at = new Date().toISOString();
+      } else if (newStatus === 'rejected') {
+        updateData.rejection_reason = notes;
+      } else if (newStatus === 'draft') {
+        updateData.status = 'draft';
+      }
+
+      const { error } = await supabase
+        .from("posts")
+        .update(updateData)
+        .eq("id", id);
+
+      if (error) throw error;
+
+      // Log validation history
+      await supabase.from("validation_history").insert({
+        content_type: 'post',
+        content_id: id,
+        from_status: formData.validation_status,
+        to_status: newStatus,
+        action_by: user.id,
+        notes,
+      });
+
+      toast.success("Statut mis à jour");
+      fetchPost();
+    } catch (error: any) {
+      toast.error(sanitizeError(error));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -122,7 +181,13 @@ const PostForm = () => {
     setLoading(true);
     try {
       const postData = {
-        ...formData,
+        title: formData.title,
+        slug: formData.slug,
+        excerpt: formData.excerpt,
+        content: formData.content,
+        category: formData.category,
+        cover_image: formData.cover_image,
+        status: formData.status,
         published_at: formData.status === "published" ? new Date().toISOString() : null,
       };
 
@@ -135,7 +200,11 @@ const PostForm = () => {
         if (error) throw error;
         toast.success("Actualité mise à jour");
       } else {
-        const { error } = await supabase.from("posts").insert([postData]);
+        const { error } = await supabase.from("posts").insert([{
+          ...postData,
+          validation_status: 'draft',
+          submitted_by: user?.id,
+        }]);
 
         if (error) throw error;
         toast.success("Actualité créée");
@@ -256,6 +325,17 @@ const PostForm = () => {
               </div>
             </CardContent>
           </Card>
+
+          {/* Validation Workflow - only show for existing posts */}
+          {id && (
+            <ValidationWorkflow
+              currentStatus={formData.validation_status}
+              onStatusChange={handleValidationChange}
+              contentType="post"
+              reviewNotes={formData.review_notes}
+              rejectionReason={formData.rejection_reason}
+            />
+          )}
 
           <Card>
             <CardHeader>

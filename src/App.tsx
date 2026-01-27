@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/lib/auth";
 import AdminRoute from "@/components/auth/AdminRoute";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Home from "./pages/Home";
 import Association from "./pages/Association";
 import NosActions from "./pages/NosActions";
@@ -31,6 +32,15 @@ import Pages from "./pages/admin/Pages";
 import PageForm from "./pages/admin/PageForm";
 import Testimonials from "./pages/admin/Testimonials";
 import TestimonialForm from "./pages/admin/TestimonialForm";
+import Permissions from "./pages/admin/Permissions";
+import ValidationQueue from "./pages/admin/ValidationQueue";
+import MemberDashboard from "./pages/member/MemberDashboard";
+import MemberProfile from "./pages/member/MemberProfile";
+import Community from "./pages/member/Community";
+import Documents from "./pages/member/Documents";
+import MemberDirectory from "./pages/member/MemberDirectory";
+import MemberEvents from "./pages/member/MemberEvents";
+import MemberActivities from "./pages/member/MemberActivities";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,12 +65,80 @@ const App = () => (
             <Route path="/mentions-legales" element={<MentionsLegales />} />
             <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
             <Route path="/auth" element={<Auth />} />
+
+            {/* Member routes - any authenticated user */}
+            <Route
+              path="/membre"
+              element={
+                <ProtectedRoute>
+                  <MemberDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/profil"
+              element={
+                <ProtectedRoute>
+                  <MemberProfile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/communaute"
+              element={
+                <ProtectedRoute>
+                  <Community />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/documents"
+              element={
+                <ProtectedRoute>
+                  <Documents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/annuaire"
+              element={
+                <ProtectedRoute>
+                  <MemberDirectory />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/evenements"
+              element={
+                <ProtectedRoute>
+                  <MemberEvents />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/membre/ateliers"
+              element={
+                <ProtectedRoute>
+                  <MemberActivities />
+                </ProtectedRoute>
+              }
+            />
+
             {/* Admin routes - Dashboard accessible by all roles */}
             <Route
               path="/admin"
               element={
                 <AdminRoute allowedRoles={['admin', 'editor', 'animator']}>
                   <Dashboard />
+                </AdminRoute>
+              }
+            />
+            {/* Validation Queue */}
+            <Route
+              path="/admin/validation"
+              element={
+                <AdminRoute allowedRoles={['admin', 'editor']}>
+                  <ValidationQueue />
                 </AdminRoute>
               }
             />
@@ -154,6 +232,15 @@ const App = () => (
               element={
                 <AdminRoute allowedRoles={['admin']}>
                   <Users />
+                </AdminRoute>
+              }
+            />
+            {/* Permissions - admin only */}
+            <Route
+              path="/admin/permissions"
+              element={
+                <AdminRoute allowedRoles={['admin']}>
+                  <Permissions />
                 </AdminRoute>
               }
             />
