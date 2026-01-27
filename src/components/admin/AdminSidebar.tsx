@@ -28,6 +28,8 @@ import {
   Shield,
   Clock,
   Image,
+  Menu,
+  Home,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -46,6 +48,8 @@ const mainItems = [
 ];
 
 const configItems = [
+  { title: "Navigation", url: "/admin/navigation", icon: Menu, module: 'settings' as const },
+  { title: "Page d'accueil", url: "/admin/homepage", icon: Home, module: 'settings' as const },
   { title: "Utilisateurs", url: "/admin/users", icon: Users, module: 'users' as const },
   { title: "Permissions", url: "/admin/permissions", icon: Shield, module: 'users' as const },
   { title: "Paramètres", url: "/admin/settings", icon: Settings, module: 'settings' as const },
