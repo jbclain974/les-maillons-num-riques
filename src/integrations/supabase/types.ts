@@ -110,6 +110,47 @@ export type Database = {
           },
         ]
       }
+      admin_audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_audit_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       community_posts: {
         Row: {
           author_id: string
@@ -841,6 +882,42 @@ export type Database = {
           module?: Database["public"]["Enums"]["app_module"]
           permission?: Database["public"]["Enums"]["app_permission"]
           role?: Database["public"]["Enums"]["app_role"]
+        }
+        Relationships: []
+      }
+      site_analytics: {
+        Row: {
+          activity_registrations: number | null
+          contact_forms: number | null
+          created_at: string | null
+          date: string
+          event_registrations: number | null
+          id: string
+          new_members: number | null
+          page_views: number | null
+          unique_visitors: number | null
+        }
+        Insert: {
+          activity_registrations?: number | null
+          contact_forms?: number | null
+          created_at?: string | null
+          date?: string
+          event_registrations?: number | null
+          id?: string
+          new_members?: number | null
+          page_views?: number | null
+          unique_visitors?: number | null
+        }
+        Update: {
+          activity_registrations?: number | null
+          contact_forms?: number | null
+          created_at?: string | null
+          date?: string
+          event_registrations?: number | null
+          id?: string
+          new_members?: number | null
+          page_views?: number | null
+          unique_visitors?: number | null
         }
         Relationships: []
       }

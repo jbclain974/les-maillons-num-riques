@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -41,8 +43,12 @@ import {
   Eye,
   Sparkles,
   AlertTriangle,
+  Key,
+  Mail,
+  Loader2,
 } from "lucide-react";
 import { sanitizeError } from "@/lib/errorSanitizer";
+import { logAdminAction } from "@/hooks/useAdminAnalytics";
 
 interface Profile {
   id: string;
@@ -102,6 +108,13 @@ const Users = () => {
     userName: string;
     newRole: AppRole;
   } | null>(null);
+  const [resetPasswordDialog, setResetPasswordDialog] = useState<{
+    open: boolean;
+    userId: string;
+    userEmail: string;
+    userName: string;
+  } | null>(null);
+  const [sendingReset, setSendingReset] = useState(false);
 
   useEffect(() => {
     fetchUsersAndRoles();
@@ -152,12 +165,38 @@ const Users = () => {
 
       if (error) throw error;
 
+      await logAdminAction("update", "user", userId, { new_role: newRole, user_name: confirmDialog.userName });
       toast.success("Rôle mis à jour avec succès");
       fetchUsersAndRoles();
     } catch (error: any) {
       toast.error(sanitizeError(error));
     } finally {
       setConfirmDialog(null);
+    }
+  };
+
+  const handleSendPasswordReset = async () => {
+    if (!resetPasswordDialog) return;
+    
+    setSendingReset(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        resetPasswordDialog.userEmail,
+        { redirectTo: `${window.location.origin}/auth` }
+      );
+      
+      if (error) throw error;
+      
+      await logAdminAction("password_reset", "user", resetPasswordDialog.userId, { 
+        user_email: resetPasswordDialog.userEmail,
+        user_name: resetPasswordDialog.userName 
+      });
+      toast.success("Email de réinitialisation envoyé");
+    } catch (error: any) {
+      toast.error(sanitizeError(error));
+    } finally {
+      setSendingReset(false);
+      setResetPasswordDialog(null);
     }
   };
 
@@ -311,6 +350,7 @@ const Users = () => {
                   <TableHead>Utilisateur</TableHead>
                   <TableHead>Rôle actuel</TableHead>
                   <TableHead>Inscrit le</TableHead>
+                  <TableHead>Actions</TableHead>
                   <TableHead className="text-right">Modifier le rôle</TableHead>
                 </TableRow>
               </TableHeader>
@@ -322,9 +362,12 @@ const Users = () => {
                     <TableRow key={profile.id} className="hover:bg-muted/50">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">
-                            {(profile.full_name?.[0] || profile.email[0]).toUpperCase()}
-                          </div>
+                          <Avatar className="h-10 w-10">
+                            <AvatarImage src={profile.avatar_url || undefined} />
+                            <AvatarFallback className="bg-gradient-to-br from-primary to-secondary text-white font-bold">
+                              {(profile.full_name?.[0] || profile.email[0]).toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
                           <div>
                             <p className="font-medium">
                               {profile.full_name || "Utilisateur sans nom"}
@@ -336,6 +379,21 @@ const Users = () => {
                       <TableCell>{getRoleBadge(roles[profile.id] || [])}</TableCell>
                       <TableCell className="text-muted-foreground">
                         {format(new Date(profile.created_at), "d MMM yyyy", { locale: fr })}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setResetPasswordDialog({
+                            open: true,
+                            userId: profile.id,
+                            userEmail: profile.email,
+                            userName: profile.full_name || profile.email,
+                          })}
+                        >
+                          <Key className="h-4 w-4 mr-1" />
+                          Reset MDP
+                        </Button>
                       </TableCell>
                       <TableCell className="text-right">
                         <Select
@@ -412,6 +470,33 @@ const Users = () => {
               </Button>
               <Button onClick={handleRoleChange}>
                 Confirmer
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Password Reset Dialog */}
+        <Dialog open={resetPasswordDialog?.open || false} onOpenChange={() => setResetPasswordDialog(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Key className="h-5 w-5 text-primary" />
+                Réinitialiser le mot de passe
+              </DialogTitle>
+              <DialogDescription>
+                Un email de réinitialisation sera envoyé à <strong>{resetPasswordDialog?.userEmail}</strong>.
+                <br /><br />
+                L'utilisateur recevra un lien pour créer un nouveau mot de passe.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setResetPasswordDialog(null)}>
+                Annuler
+              </Button>
+              <Button onClick={handleSendPasswordReset} disabled={sendingReset}>
+                {sendingReset && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+                <Mail className="h-4 w-4 mr-2" />
+                Envoyer l'email
               </Button>
             </DialogFooter>
           </DialogContent>
