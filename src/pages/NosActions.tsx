@@ -4,6 +4,8 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart, Loader2, MessageCircle, Palette, Wrench, Music, Bike, Building2, Users, Star, Calendar, LucideIcon } from "lucide-react";
 import { useHomepageActions } from "@/hooks/useHomepageActions";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 const iconMap: Record<string, LucideIcon> = {
   MessageCircle,
@@ -66,6 +68,7 @@ const actionDetails: Record<string, { category: string; details: string; schedul
 const NosActions = () => {
   const location = useLocation();
   const { data: actions, isLoading } = useHomepageActions();
+  const { getContent, updateContent } = usePageContent("nos-actions");
 
   // Scroll to anchor on mount or hash change
   useEffect(() => {
@@ -86,11 +89,22 @@ const NosActions = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Nos Actions</h1>
-            <p className="text-xl text-muted-foreground">
-              Un accompagnement complet et diversifié pour reconstruire sa vie à travers 
-              l'entraide, la créativité, le sport et l'expression de soi.
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Nos Actions")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Un accompagnement complet et diversifié pour reconstruire sa vie à travers l'entraide, la créativité, le sport et l'expression de soi."
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -166,11 +180,21 @@ const NosActions = () => {
       <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h2>Envie de participer ?</h2>
-            <p className="text-lg text-muted-foreground">
-              Toutes nos activités sont ouvertes à nos adhérents. L'adhésion annuelle est de 
-              <strong> 12 €</strong> et vous donne accès à l'ensemble de nos ateliers et activités.
-            </p>
+            <EditablePageText
+              value={getContent("cta_title", "Envie de participer ?")}
+              onSave={(v) => updateContent("cta_title", v)}
+              as="h2"
+            />
+            <EditablePageText
+              value={getContent(
+                "cta_desc",
+                "Toutes nos activités sont ouvertes à nos adhérents. L'adhésion annuelle est de 12 € et vous donne accès à l'ensemble de nos ateliers et activités."
+              )}
+              onSave={(v) => updateContent("cta_desc", v)}
+              as="p"
+              className="text-lg text-muted-foreground"
+              multiline
+            />
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
                 href="/contact"

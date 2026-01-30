@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar } from "lucide-react";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 interface Post {
   id: string;
@@ -18,6 +20,7 @@ interface Post {
 }
 
 const Actualites = () => {
+  const { getContent, updateContent } = usePageContent("actualites");
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -48,10 +51,22 @@ const Actualites = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Actualités</h1>
-            <p className="text-xl text-muted-foreground">
-              Suivez nos dernières nouvelles, événements et réussites
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Actualités")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Suivez nos dernières nouvelles, événements et réussites"
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>

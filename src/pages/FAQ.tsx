@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 interface FAQItem {
   id: string;
@@ -17,6 +19,7 @@ interface FAQItem {
 }
 
 const FAQ = () => {
+  const { getContent, updateContent } = usePageContent("faq");
   const [faqItems, setFaqItems] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,11 +53,22 @@ const FAQ = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Questions Fréquentes</h1>
-            <p className="text-xl text-muted-foreground">
-              Trouvez rapidement les réponses à vos questions sur l'association, 
-              l'adhésion et nos activités
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Questions Fréquentes")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Trouvez rapidement les réponses à vos questions sur l'association, l'adhésion et nos activités"
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -107,11 +121,22 @@ const FAQ = () => {
           <div className="max-w-2xl mx-auto">
             <Card>
               <CardContent className="p-8 text-center space-y-4">
-                <h2 className="text-2xl font-bold">Vous n'avez pas trouvé votre réponse ?</h2>
-                <p className="text-muted-foreground">
-                  Notre équipe est là pour répondre à toutes vos questions. 
-                  N'hésitez pas à nous contacter !
-                </p>
+                <EditablePageText
+                  value={getContent("cta_title", "Vous n'avez pas trouvé votre réponse ?")}
+                  onSave={(v) => updateContent("cta_title", v)}
+                  as="h2"
+                  className="text-2xl font-bold"
+                />
+                <EditablePageText
+                  value={getContent(
+                    "cta_desc",
+                    "Notre équipe est là pour répondre à toutes vos questions. N'hésitez pas à nous contacter !"
+                  )}
+                  onSave={(v) => updateContent("cta_desc", v)}
+                  as="p"
+                  className="text-muted-foreground"
+                  multiline
+                />
                 <a
                   href="/contact"
                   className="inline-flex items-center justify-center rounded-lg gradient-ocean px-8 py-3 text-white hover:opacity-90 transition-opacity"
