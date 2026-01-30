@@ -814,6 +814,7 @@ export type Database = {
           emergency_phone: string | null
           full_name: string | null
           id: string
+          is_account_active: boolean | null
           is_active_member: boolean | null
           membership_end: string | null
           membership_start: string | null
@@ -833,6 +834,7 @@ export type Database = {
           emergency_phone?: string | null
           full_name?: string | null
           id: string
+          is_account_active?: boolean | null
           is_active_member?: boolean | null
           membership_end?: string | null
           membership_start?: string | null
@@ -852,6 +854,7 @@ export type Database = {
           emergency_phone?: string | null
           full_name?: string | null
           id?: string
+          is_account_active?: boolean | null
           is_active_member?: boolean | null
           membership_end?: string | null
           membership_start?: string | null
