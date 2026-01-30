@@ -24,12 +24,16 @@ const FloatingDock = () => {
   const location = useLocation();
   
   const isInAdminArea = location.pathname.startsWith("/admin");
+  const isInMemberArea = location.pathname.startsWith("/membre");
 
   const handleEditModeToggle = () => {
     if (!isEditMode) {
-      // Enabling edit mode - redirect to homepage
+      // Enabling edit mode
       setEditMode(true);
-      navigate("/");
+      // Only redirect to homepage if we're in admin area
+      if (isInAdminArea) {
+        navigate("/");
+      }
     } else {
       // Disabling edit mode
       setEditMode(false);
@@ -40,6 +44,9 @@ const FloatingDock = () => {
     setEditMode(false);
     navigate("/admin");
   };
+
+  // Don't show the dock in member area
+  if (isInMemberArea) return null;
 
   // Only show for admins and editors
   if (!isAdmin && !isEditor) return null;
@@ -93,8 +100,8 @@ const FloatingDock = () => {
             </div>
           )}
 
-          {/* Back to admin button - only in edit mode */}
-          {isEditMode && (
+          {/* Back to admin button - only in edit mode and on public pages */}
+          {isEditMode && !isInAdminArea && (
             <Button
               variant="outline"
               size="sm"
@@ -104,6 +111,16 @@ const FloatingDock = () => {
               <ArrowLeft className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Retour Admin</span>
             </Button>
+          )}
+
+          {/* Current page indicator in edit mode */}
+          {isEditMode && !isInAdminArea && (
+            <div className="hidden md:flex items-center gap-1.5 px-2 py-1 bg-primary/10 rounded-md text-xs text-primary">
+              <Home className="h-3 w-3" />
+              <span className="font-medium">
+                {location.pathname === "/" ? "Accueil" : location.pathname.replace("/", "").charAt(0).toUpperCase() + location.pathname.slice(2)}
+              </span>
+            </div>
           )}
 
           {/* Edit mode toggle */}
