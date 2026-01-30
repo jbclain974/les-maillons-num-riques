@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Calendar, MapPin } from "lucide-react";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 interface Event {
   id: string;
@@ -28,6 +30,7 @@ const typeLabels: { [key: string]: string } = {
 };
 
 const Projets = () => {
+  const { getContent, updateContent } = usePageContent("projets");
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -58,10 +61,22 @@ const Projets = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Projets & Événements</h1>
-            <p className="text-xl text-muted-foreground">
-              Découvrez nos événements phares : Caravane Vélo, Grand Raid, et toutes nos actions de prévention
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Projets & Événements")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Découvrez nos événements phares : Caravane Vélo, Grand Raid, et toutes nos actions de prévention"
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -143,27 +158,52 @@ const Projets = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h2>Nos Événements Phares</h2>
+            <EditablePageText
+              value={getContent("phares_title", "Nos Événements Phares")}
+              onSave={(v) => updateContent("phares_title", v)}
+              as="h2"
+            />
             
             <div className="grid gap-6 md:grid-cols-2 text-left">
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-3">Caravane Vélo</h3>
-                  <p className="text-muted-foreground">
-                    Notre événement majeur de prévention : un tour complet de l'île à vélo pour 
-                    sensibiliser contre l'alcool et les drogues. Une semaine d'actions, de rencontres 
-                    et de solidarité.
-                  </p>
+                  <EditablePageText
+                    value={getContent("phare1_title", "Caravane Vélo")}
+                    onSave={(v) => updateContent("phare1_title", v)}
+                    as="h3"
+                    className="text-xl font-bold mb-3"
+                  />
+                  <EditablePageText
+                    value={getContent(
+                      "phare1_desc",
+                      "Notre événement majeur de prévention : un tour complet de l'île à vélo pour sensibiliser contre l'alcool et les drogues. Une semaine d'actions, de rencontres et de solidarité."
+                    )}
+                    onSave={(v) => updateContent("phare1_desc", v)}
+                    as="p"
+                    className="text-muted-foreground"
+                    multiline
+                  />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-3">Grand Raid & Joëlettes</h3>
-                  <p className="text-muted-foreground">
-                    Nous préparons nos adhérents au Grand Raid et permettons à des personnes en 
-                    situation de handicap de vivre cette aventure exceptionnelle grâce aux joëlettes.
-                  </p>
+                  <EditablePageText
+                    value={getContent("phare2_title", "Grand Raid & Joëlettes")}
+                    onSave={(v) => updateContent("phare2_title", v)}
+                    as="h3"
+                    className="text-xl font-bold mb-3"
+                  />
+                  <EditablePageText
+                    value={getContent(
+                      "phare2_desc",
+                      "Nous préparons nos adhérents au Grand Raid et permettons à des personnes en situation de handicap de vivre cette aventure exceptionnelle grâce aux joëlettes."
+                    )}
+                    onSave={(v) => updateContent("phare2_desc", v)}
+                    as="p"
+                    className="text-muted-foreground"
+                    multiline
+                  />
                 </CardContent>
               </Card>
             </div>

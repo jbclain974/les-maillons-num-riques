@@ -6,11 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MapPin, Mail, Phone, Clock } from "lucide-react";
+import { MapPin, Mail, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 const Contact = () => {
+  const { getContent, updateContent } = usePageContent("contact");
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -43,7 +46,6 @@ const Contact = () => {
 
       toast.success("Message envoyé avec succès ! Nous vous recontacterons rapidement.");
       
-      // Réinitialiser le formulaire
       setFormData({
         name: "",
         email: "",
@@ -65,11 +67,22 @@ const Contact = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Contactez-nous</h1>
-            <p className="text-xl text-muted-foreground">
-              Besoin d'aide, d'informations ou envie de rejoindre notre association ? 
-              N'hésitez pas à nous contacter.
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Contactez-nous")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Besoin d'aide, d'informations ou envie de rejoindre notre association ? N'hésitez pas à nous contacter."
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -89,11 +102,16 @@ const Contact = () => {
                     <MapPin className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Adresse</p>
-                      <p className="text-sm text-muted-foreground">
-                        18 Allée Avé Maria<br />
-                        97400 Saint-Denis<br />
-                        La Réunion
-                      </p>
+                      <EditablePageText
+                        value={getContent(
+                          "adresse",
+                          "18 Allée Avé Maria\n97400 Saint-Denis\nLa Réunion"
+                        )}
+                        onSave={(v) => updateContent("adresse", v)}
+                        as="p"
+                        className="text-sm text-muted-foreground whitespace-pre-line"
+                        multiline
+                      />
                     </div>
                   </div>
 
@@ -114,10 +132,16 @@ const Contact = () => {
                     <Clock className="h-5 w-5 text-primary mt-1 flex-shrink-0" />
                     <div>
                       <p className="font-medium">Horaires d'ouverture</p>
-                      <p className="text-sm text-muted-foreground">
-                        Lundi - Vendredi<br />
-                        9h00 - 17h00
-                      </p>
+                      <EditablePageText
+                        value={getContent(
+                          "horaires",
+                          "Lundi - Vendredi\n9h00 - 17h00"
+                        )}
+                        onSave={(v) => updateContent("horaires", v)}
+                        as="p"
+                        className="text-sm text-muted-foreground whitespace-pre-line"
+                        multiline
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -128,9 +152,15 @@ const Contact = () => {
                   <CardTitle className="text-primary">Besoin d'aide urgent ?</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Si vous ou un proche êtes en situation de crise, contactez :
-                  </p>
+                  <EditablePageText
+                    value={getContent(
+                      "urgence_intro",
+                      "Si vous ou un proche êtes en situation de crise, contactez :"
+                    )}
+                    onSave={(v) => updateContent("urgence_intro", v)}
+                    as="p"
+                    className="text-sm text-muted-foreground mb-4"
+                  />
                   <ul className="text-sm space-y-2">
                     <li>
                       <strong>Alcooliques Anonymes :</strong><br />
@@ -253,7 +283,12 @@ const Contact = () => {
       {/* Map */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
-          <h2 className="mb-8 text-center">Où nous trouver</h2>
+          <EditablePageText
+            value={getContent("map_title", "Où nous trouver")}
+            onSave={(v) => updateContent("map_title", v)}
+            as="h2"
+            className="mb-8 text-center"
+          />
           <div className="max-w-4xl mx-auto">
             <div className="aspect-video rounded-xl overflow-hidden shadow-lg">
               <iframe

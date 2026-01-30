@@ -2,19 +2,34 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Heart, Euro, HandHeart, Users } from "lucide-react";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 const Soutenir = () => {
+  const { getContent, updateContent } = usePageContent("soutenir");
+
   return (
     <Layout>
       {/* Hero */}
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Soutenir Notre Action</h1>
-            <p className="text-xl text-muted-foreground">
-              Votre soutien nous permet de continuer à accompagner les personnes en difficulté. 
-              Chaque geste compte !
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Soutenir Notre Action")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Votre soutien nous permet de continuer à accompagner les personnes en difficulté. Chaque geste compte !"
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -32,10 +47,22 @@ const Soutenir = () => {
                 <CardTitle className="text-2xl">Adhérer</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-center">
-                <div className="text-4xl font-bold text-primary">12 €</div>
-                <p className="text-muted-foreground">
-                  Adhésion annuelle donnant accès à tous nos ateliers et activités
-                </p>
+                <EditablePageText
+                  value={getContent("adhesion_prix", "12 €")}
+                  onSave={(v) => updateContent("adhesion_prix", v)}
+                  as="div"
+                  className="text-4xl font-bold text-primary"
+                />
+                <EditablePageText
+                  value={getContent(
+                    "adhesion_desc",
+                    "Adhésion annuelle donnant accès à tous nos ateliers et activités"
+                  )}
+                  onSave={(v) => updateContent("adhesion_desc", v)}
+                  as="p"
+                  className="text-muted-foreground"
+                  multiline
+                />
                 <ul className="text-sm text-left space-y-2 text-muted-foreground">
                   <li>✓ Accès à tous les ateliers</li>
                   <li>✓ Participation aux sorties sportives</li>
@@ -57,10 +84,22 @@ const Soutenir = () => {
                 <CardTitle className="text-2xl">Faire un don</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-center">
-                <div className="text-4xl font-bold text-secondary">Montant libre</div>
-                <p className="text-muted-foreground">
-                  Soutenez financièrement nos actions et projets
-                </p>
+                <EditablePageText
+                  value={getContent("don_montant", "Montant libre")}
+                  onSave={(v) => updateContent("don_montant", v)}
+                  as="div"
+                  className="text-4xl font-bold text-secondary"
+                />
+                <EditablePageText
+                  value={getContent(
+                    "don_desc",
+                    "Soutenez financièrement nos actions et projets"
+                  )}
+                  onSave={(v) => updateContent("don_desc", v)}
+                  as="p"
+                  className="text-muted-foreground"
+                  multiline
+                />
                 <ul className="text-sm text-left space-y-2 text-muted-foreground">
                   <li>✓ Don déductible des impôts (66%)</li>
                   <li>✓ Paiement sécurisé</li>
@@ -85,10 +124,22 @@ const Soutenir = () => {
                 <CardTitle className="text-2xl">Devenir bénévole</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-center">
-                <div className="text-4xl font-bold text-accent">Votre temps</div>
-                <p className="text-muted-foreground">
-                  Donnez de votre temps pour accompagner et animer
-                </p>
+                <EditablePageText
+                  value={getContent("benevole_titre", "Votre temps")}
+                  onSave={(v) => updateContent("benevole_titre", v)}
+                  as="div"
+                  className="text-4xl font-bold text-accent"
+                />
+                <EditablePageText
+                  value={getContent(
+                    "benevole_desc",
+                    "Donnez de votre temps pour accompagner et animer"
+                  )}
+                  onSave={(v) => updateContent("benevole_desc", v)}
+                  as="p"
+                  className="text-muted-foreground"
+                  multiline
+                />
                 <ul className="text-sm text-left space-y-2 text-muted-foreground">
                   <li>✓ Animation d'ateliers</li>
                   <li>✓ Accompagnement sportif</li>
@@ -108,7 +159,12 @@ const Soutenir = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h2 className="mb-12 text-center">L'Impact de Votre Soutien</h2>
+            <EditablePageText
+              value={getContent("impact_title", "L'Impact de Votre Soutien")}
+              onSave={(v) => updateContent("impact_title", v)}
+              as="h2"
+              className="mb-12 text-center"
+            />
             
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
@@ -118,8 +174,18 @@ const Soutenir = () => {
                       <Users className="h-6 w-6 text-primary" />
                     </div>
                     <div>
-                      <div className="text-2xl font-bold">120</div>
-                      <div className="text-sm text-muted-foreground">Adhérents accompagnés</div>
+                      <EditablePageText
+                        value={getContent("stat1_value", "120")}
+                        onSave={(v) => updateContent("stat1_value", v)}
+                        as="div"
+                        className="text-2xl font-bold"
+                      />
+                      <EditablePageText
+                        value={getContent("stat1_label", "Adhérents accompagnés")}
+                        onSave={(v) => updateContent("stat1_label", v)}
+                        as="div"
+                        className="text-sm text-muted-foreground"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -132,8 +198,18 @@ const Soutenir = () => {
                       <Heart className="h-6 w-6 text-secondary" fill="currentColor" />
                     </div>
                     <div>
-                      <div className="text-2xl font-bold">80</div>
-                      <div className="text-sm text-muted-foreground">Personnes en abstinence</div>
+                      <EditablePageText
+                        value={getContent("stat2_value", "80")}
+                        onSave={(v) => updateContent("stat2_value", v)}
+                        as="div"
+                        className="text-2xl font-bold"
+                      />
+                      <EditablePageText
+                        value={getContent("stat2_label", "Personnes en abstinence")}
+                        onSave={(v) => updateContent("stat2_label", v)}
+                        as="div"
+                        className="text-sm text-muted-foreground"
+                      />
                     </div>
                   </div>
                 </CardContent>
@@ -141,7 +217,12 @@ const Soutenir = () => {
 
               <Card className="md:col-span-2">
                 <CardContent className="p-6">
-                  <h3 className="font-bold mb-3">Concrètement, vos dons permettent :</h3>
+                  <EditablePageText
+                    value={getContent("impact_subtitle", "Concrètement, vos dons permettent :")}
+                    onSave={(v) => updateContent("impact_subtitle", v)}
+                    as="h3"
+                    className="font-bold mb-3"
+                  />
                   <ul className="grid gap-3 md:grid-cols-2 text-sm text-muted-foreground">
                     <li>✓ Financer les sorties vélo et randonnées</li>
                     <li>✓ Acheter du matériel pour les ateliers créatifs</li>
@@ -161,36 +242,74 @@ const Soutenir = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
-            <h2 className="mb-8 text-center">Autres Façons d'Aider</h2>
+            <EditablePageText
+              value={getContent("autres_title", "Autres Façons d'Aider")}
+              onSave={(v) => updateContent("autres_title", v)}
+              as="h2"
+              className="mb-8 text-center"
+            />
             
             <div className="space-y-6">
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-bold mb-2">Parlez de nous</h3>
-                  <p className="text-muted-foreground">
-                    Partagez notre action autour de vous, sur les réseaux sociaux, avec les personnes 
-                    qui pourraient avoir besoin d'aide ou souhaiter nous soutenir.
-                  </p>
+                  <EditablePageText
+                    value={getContent("autre1_title", "Parlez de nous")}
+                    onSave={(v) => updateContent("autre1_title", v)}
+                    as="h3"
+                    className="font-bold mb-2"
+                  />
+                  <EditablePageText
+                    value={getContent(
+                      "autre1_desc",
+                      "Partagez notre action autour de vous, sur les réseaux sociaux, avec les personnes qui pourraient avoir besoin d'aide ou souhaiter nous soutenir."
+                    )}
+                    onSave={(v) => updateContent("autre1_desc", v)}
+                    as="p"
+                    className="text-muted-foreground"
+                    multiline
+                  />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-bold mb-2">Dons en nature</h3>
-                  <p className="text-muted-foreground">
-                    Matériel d'atelier (peinture, toiles, outils), équipements sportifs (vélos, 
-                    casques), ou fournitures de bureau sont toujours les bienvenus.
-                  </p>
+                  <EditablePageText
+                    value={getContent("autre2_title", "Dons en nature")}
+                    onSave={(v) => updateContent("autre2_title", v)}
+                    as="h3"
+                    className="font-bold mb-2"
+                  />
+                  <EditablePageText
+                    value={getContent(
+                      "autre2_desc",
+                      "Matériel d'atelier (peinture, toiles, outils), équipements sportifs (vélos, casques), ou fournitures de bureau sont toujours les bienvenus."
+                    )}
+                    onSave={(v) => updateContent("autre2_desc", v)}
+                    as="p"
+                    className="text-muted-foreground"
+                    multiline
+                  />
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="font-bold mb-2">Partenariats entreprises</h3>
-                  <p className="text-muted-foreground">
-                    Vous êtes une entreprise et souhaitez soutenir notre action ? Nous proposons 
-                    des partenariats adaptés à vos valeurs et objectifs RSE.
-                  </p>
+                  <EditablePageText
+                    value={getContent("autre3_title", "Partenariats entreprises")}
+                    onSave={(v) => updateContent("autre3_title", v)}
+                    as="h3"
+                    className="font-bold mb-2"
+                  />
+                  <EditablePageText
+                    value={getContent(
+                      "autre3_desc",
+                      "Vous êtes une entreprise et souhaitez soutenir notre action ? Nous proposons des partenariats adaptés à vos valeurs et objectifs RSE."
+                    )}
+                    onSave={(v) => updateContent("autre3_desc", v)}
+                    as="p"
+                    className="text-muted-foreground"
+                    multiline
+                  />
                 </CardContent>
               </Card>
             </div>

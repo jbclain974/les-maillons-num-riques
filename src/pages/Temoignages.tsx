@@ -3,6 +3,8 @@ import Layout from "@/components/layout/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Quote } from "lucide-react";
+import { usePageContent } from "@/hooks/usePageContent";
+import EditablePageText from "@/components/editable/EditablePageText";
 
 interface Testimonial {
   id: string;
@@ -13,6 +15,7 @@ interface Testimonial {
 }
 
 const Temoignages = () => {
+  const { getContent, updateContent } = usePageContent("temoignages");
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,11 +46,22 @@ const Temoignages = () => {
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="mb-6">Témoignages</h1>
-            <p className="text-xl text-muted-foreground">
-              Des parcours de vie, des réussites, de l'espoir. 
-              Ils ont franchi le pas et témoignent de leur reconstruction.
-            </p>
+            <EditablePageText
+              value={getContent("hero_title", "Témoignages")}
+              onSave={(v) => updateContent("hero_title", v)}
+              as="h1"
+              className="mb-6"
+            />
+            <EditablePageText
+              value={getContent(
+                "hero_subtitle",
+                "Des parcours de vie, des réussites, de l'espoir. Ils ont franchi le pas et témoignent de leur reconstruction."
+              )}
+              onSave={(v) => updateContent("hero_subtitle", v)}
+              as="p"
+              className="text-xl text-muted-foreground"
+              multiline
+            />
           </div>
         </div>
       </section>
@@ -67,7 +81,12 @@ const Temoignages = () => {
             <>
               {/* Témoignages featured */}
               <div className="max-w-5xl mx-auto mb-16">
-                <h2 className="text-center mb-12">Témoignages Marquants</h2>
+                <EditablePageText
+                  value={getContent("featured_title", "Témoignages Marquants")}
+                  onSave={(v) => updateContent("featured_title", v)}
+                  as="h2"
+                  className="text-center mb-12"
+                />
                 <div className="grid gap-8 md:grid-cols-2">
                   {testimonials
                     .filter((t) => t.is_featured)
@@ -95,7 +114,12 @@ const Temoignages = () => {
               {/* Autres témoignages */}
               {testimonials.filter((t) => !t.is_featured).length > 0 && (
                 <div className="max-w-5xl mx-auto">
-                  <h2 className="text-center mb-12">Autres Témoignages</h2>
+                  <EditablePageText
+                    value={getContent("others_title", "Autres Témoignages")}
+                    onSave={(v) => updateContent("others_title", v)}
+                    as="h2"
+                    className="text-center mb-12"
+                  />
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {testimonials
                       .filter((t) => !t.is_featured)
@@ -124,11 +148,21 @@ const Temoignages = () => {
       <section className="py-20 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center space-y-6">
-            <h2>Vous Aussi, Écrivez Votre Histoire</h2>
-            <p className="text-lg text-muted-foreground">
-              Si vous souhaitez partager votre témoignage et inspirer d'autres personnes, 
-              n'hésitez pas à nous contacter. Votre histoire peut aider quelqu'un à franchir le pas.
-            </p>
+            <EditablePageText
+              value={getContent("cta_title", "Vous Aussi, Écrivez Votre Histoire")}
+              onSave={(v) => updateContent("cta_title", v)}
+              as="h2"
+            />
+            <EditablePageText
+              value={getContent(
+                "cta_desc",
+                "Si vous souhaitez partager votre témoignage et inspirer d'autres personnes, n'hésitez pas à nous contacter. Votre histoire peut aider quelqu'un à franchir le pas."
+              )}
+              onSave={(v) => updateContent("cta_desc", v)}
+              as="p"
+              className="text-lg text-muted-foreground"
+              multiline
+            />
             <a
               href="/contact"
               className="inline-flex items-center justify-center rounded-lg gradient-ocean px-8 py-3 text-white hover:opacity-90 transition-opacity"
