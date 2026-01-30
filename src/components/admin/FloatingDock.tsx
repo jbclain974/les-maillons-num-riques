@@ -9,15 +9,37 @@ import {
   Menu, 
   Image, 
   FileText,
-  X
+  X,
+  Home,
+  ArrowLeft
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const FloatingDock = () => {
-  const { isAdmin, isEditor, isEditMode, toggleEditMode } = useAdminEdit();
+  const { isAdmin, isEditor, isEditMode, toggleEditMode, setEditMode } = useAdminEdit();
   const [isExpanded, setIsExpanded] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const isInAdminArea = location.pathname.startsWith("/admin");
+
+  const handleEditModeToggle = () => {
+    if (!isEditMode) {
+      // Enabling edit mode - redirect to homepage
+      setEditMode(true);
+      navigate("/");
+    } else {
+      // Disabling edit mode
+      setEditMode(false);
+    }
+  };
+
+  const handleBackToAdmin = () => {
+    setEditMode(false);
+    navigate("/admin");
+  };
 
   // Only show for admins and editors
   if (!isAdmin && !isEditor) return null;
@@ -53,8 +75,8 @@ const FloatingDock = () => {
             )}
           </Button>
 
-          {/* Quick links - only when expanded */}
-          {isExpanded && (
+          {/* Quick links - only when expanded and NOT in edit mode */}
+          {isExpanded && !isEditMode && (
             <div className="flex items-center gap-2 border-r border-border pr-4">
               {quickLinks.map((link) => (
                 <Link key={link.href} to={link.href}>
@@ -71,6 +93,19 @@ const FloatingDock = () => {
             </div>
           )}
 
+          {/* Back to admin button - only in edit mode */}
+          {isEditMode && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleBackToAdmin}
+              className="h-8 px-3 gap-1.5 text-xs border-primary/30 hover:bg-primary/10"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Retour Admin</span>
+            </Button>
+          )}
+
           {/* Edit mode toggle */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
@@ -85,7 +120,7 @@ const FloatingDock = () => {
             </div>
             <Switch
               checked={isEditMode}
-              onCheckedChange={toggleEditMode}
+              onCheckedChange={handleEditModeToggle}
               className={cn(
                 "data-[state=checked]:bg-primary",
                 isEditMode && "ring-2 ring-primary/30"
@@ -107,7 +142,7 @@ const FloatingDock = () => {
         {/* Edit mode helper text */}
         {isEditMode && (
           <div className="mt-2 pt-2 border-t border-border text-xs text-muted-foreground text-center">
-            Cliquez sur les éléments avec un contour pour les modifier
+            Cliquez sur les éléments avec un contour pour les modifier • <span className="font-medium text-primary">Naviguez sur le site pour éditer</span>
           </div>
         )}
       </div>
