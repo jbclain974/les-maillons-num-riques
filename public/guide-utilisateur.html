@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Utilisateur - Les Maillons de l'Espoir</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a1a2e;
+            background: #ffffff;
+            font-size: 11pt;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+        }
+        
+        /* Cover Page */
+        .cover {
+            text-align: center;
+            padding: 100px 40px;
+            background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+            color: white;
+            margin: -40px -40px 40px -40px;
+            page-break-after: always;
+        }
+        
+        .cover-logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .cover h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .cover h2 {
+            font-size: 24px;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        
+        .cover-meta {
+            margin-top: 60px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        /* Table of Contents */
+        .toc {
+            background: #f8fafc;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            page-break-after: always;
+        }
+        
+        .toc h2 {
+            color: #0ea5e9;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+        
+        .toc-list {
+            list-style: none;
+        }
+        
+        .toc-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .toc-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .toc-list a {
+            color: #334155;
+            text-decoration: none;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .toc-list .page-num {
+            color: #94a3b8;
+        }
+        
+        /* Sections */
+        h1 {
+            color: #0ea5e9;
+            font-size: 24px;
+            margin: 40px 0 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #0ea5e9;
+            page-break-before: always;
+        }
+        
+        h1:first-of-type {
+            page-break-before: avoid;
+        }
+        
+        h2 {
+            color: #1e40af;
+            font-size: 18px;
+            margin: 30px 0 15px;
+        }
+        
+        h3 {
+            color: #334155;
+            font-size: 14px;
+            margin: 20px 0 10px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 10pt;
+        }
+        
+        th {
+            background: #0ea5e9;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        /* Info Boxes */
+        .info-box {
+            background: #eff6ff;
+            border-left: 4px solid #0ea5e9;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .info-box.warning {
+            background: #fef3c7;
+            border-left-color: #f59e0b;
+        }
+        
+        .info-box.success {
+            background: #dcfce7;
+            border-left-color: #22c55e;
+        }
+        
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        /* Lists */
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        /* Steps */
+        .steps {
+            counter-reset: step;
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .steps li {
+            position: relative;
+            padding-left: 45px;
+            margin-bottom: 15px;
+        }
+        
+        .steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 28px;
+            height: 28px;
+            background: #0ea5e9;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        
+        /* Role Badges */
+        .role-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        .role-admin { background: #fee2e2; color: #dc2626; }
+        .role-editor { background: #dbeafe; color: #2563eb; }
+        .role-animator { background: #d1fae5; color: #059669; }
+        .role-viewer { background: #f3f4f6; color: #6b7280; }
+        
+        /* Checkmarks */
+        .check { color: #22c55e; font-weight: bold; }
+        .cross { color: #ef4444; font-weight: bold; }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                font-size: 10pt;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+            
+            .cover {
+                margin: -20px -20px 20px -20px;
+            }
+            
+            h1 {
+                page-break-before: always;
+            }
+            
+            table, .info-box {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Footer */
+        .page-footer {
+            margin-top: 60px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: center;
+            color: #94a3b8;
+            font-size: 10pt;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cover Page -->
+        <div class="cover">
+            <div class="cover-logo">💙</div>
+            <h1>Les Maillons de l'Espoir</h1>
+            <h2>Guide Utilisateur</h2>
+            <p>Manuel complet pour naviguer et utiliser le site web de l'association</p>
+            <div class="cover-meta">
+                <p>Version 1.0 — Février 2026</p>
+            </div>
+        </div>
+        
+        <!-- Table of Contents -->
+        <div class="toc">
+            <h2>📑 Sommaire</h2>
+            <ol class="toc-list">
+                <li><a href="#visiteur">Visiteur / Invité <span class="page-num">3</span></a></li>
+                <li><a href="#membre">Membre Inscrit <span class="page-num">5</span></a></li>
+                <li><a href="#lecteur">Rôle Lecteur <span class="page-num">7</span></a></li>
+                <li><a href="#animateur">Rôle Animateur <span class="page-num">8</span></a></li>
+                <li><a href="#editeur">Rôle Éditeur <span class="page-num">10</span></a></li>
+                <li><a href="#admin">Rôle Administrateur <span class="page-num">13</span></a></li>
+                <li><a href="#annexes">Annexes <span class="page-num">16</span></a></li>
+            </ol>
+        </div>
+        
+        <!-- Section 1: Visiteur -->
+        <h1 id="visiteur">1. Visiteur / Invité</h1>
+        
+        <p>Tout visiteur peut accéder aux pages publiques du site sans inscription ni connexion.</p>
+        
+        <h2>🌐 Pages accessibles</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Page</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Accueil</strong></td><td>Présentation générale de l'association</td></tr>
+                <tr><td><strong>L'Association</strong></td><td>Mission, valeurs, équipe et histoire</td></tr>
+                <tr><td><strong>Nos Actions</strong></td><td>Activités et ateliers proposés</td></tr>
+                <tr><td><strong>Actualités</strong></td><td>Articles et nouvelles</td></tr>
+                <tr><td><strong>Projets</strong></td><td>Événements passés et à venir</td></tr>
+                <tr><td><strong>Témoignages</strong></td><td>Retours d'expérience</td></tr>
+                <tr><td><strong>Contact</strong></td><td>Formulaire et coordonnées</td></tr>
+                <tr><td><strong>FAQ</strong></td><td>Questions fréquentes</td></tr>
+                <tr><td><strong>Nous Soutenir</strong></td><td>Options de soutien</td></tr>
+            </tbody>
+        </table>
+        
+        <h2>📧 Nous contacter</h2>
+        
+        <p>Pour nous contacter, utilisez le formulaire sur la page Contact :</p>
+        
+        <ol class="steps">
+            <li>Accédez à la page <strong>Contact</strong> via le menu</li>
+            <li>Remplissez les champs obligatoires : nom, email, sujet, message</li>
+            <li>Cliquez sur <strong>Envoyer le message</strong></li>
+            <li>Un message de confirmation s'affiche</li>
+        </ol>
+        
+        <div class="info-box success">
+            <strong>✅ Confirmation</strong>
+            Après l'envoi, vous recevrez une confirmation à l'écran. Notre équipe vous répondra dans les plus brefs délais.
+        </div>
+        
+        <!-- Section 2: Membre -->
+        <h1 id="membre">2. Membre Inscrit</h1>
+        
+        <p>L'espace membre est accessible aux personnes inscrites et connectées à l'application.</p>
+        
+        <h2>🔐 Créer un compte</h2>
+        
+        <ol class="steps">
+            <li>Cliquez sur <strong>« Espace membre »</strong> ou <strong>« Admin »</strong> dans le menu</li>
+            <li>Sélectionnez l'onglet <strong>« Inscription »</strong></li>
+            <li>Remplissez le formulaire : nom complet, email, mot de passe</li>
+            <li>Cliquez sur <strong>« Créer un compte »</strong></li>
+            <li>Vérifiez votre boîte email si une confirmation est demandée</li>
+        </ol>
+        
+        <h2>🔑 Se connecter</h2>
+        
+        <ol class="steps">
+            <li>Accédez à la page de connexion</li>
+            <li>Entrez votre email et mot de passe</li>
+            <li>Cliquez sur <strong>« Se connecter »</strong></li>
+        </ol>
+        
+        <h2>👤 Votre espace personnel</h2>
+        
+        <p>Après connexion, vous avez accès à plusieurs fonctionnalités :</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Section</th>
+                    <th>Fonctionnalité</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><strong>Mon Profil</strong></td><td>Modifier vos informations personnelles et photo</td></tr>
+                <tr><td><strong>Mes Activités</strong></td><td>Consulter et s'inscrire aux activités</td></tr>
+                <tr><td><strong>Mes Événements</strong></td><td>Voir les événements et s'y inscrire</td></tr>
+                <tr><td><strong>Communauté</strong></td><td>Forum d'échange entre membres</td></tr>
+                <tr><td><strong>Documents</strong></td><td>Accéder aux documents internes</td></tr>
+                <tr><td><strong>Annuaire</strong></td><td>Consulter le répertoire des membres</td></tr>
+            </tbody>
+        </table>
+        
+        <!-- Section 3: Lecteur -->
+        <h1 id="lecteur">3. Rôle Lecteur</h1>
+        
+        <p><span class="role-badge role-viewer">Lecteur</span> Le rôle Lecteur (Viewer) est attribué par défaut à tout nouvel inscrit.</p>
+        
+        <h2>✅ Ce que vous pouvez faire</h2>
+        
+        <ul>
+            <li>Naviguer sur toutes les pages publiques</li>
+            <li>Gérer votre profil membre</li>
+            <li>Participer aux activités et événements</li>
+            <li>Échanger avec la communauté</li>
+            <li>Consulter les documents partagés</li>
+        </ul>
+        
+        <h2>❌ Ce que vous ne pouvez pas faire</h2>
+        
+        <ul>
+            <li>Accéder au panneau d'administration</li>
+            <li>Modifier le contenu du site</li>
+            <li>Gérer les utilisateurs</li>
+        </ul>
+        
+        <div class="info-box">
+            <strong>💡 Besoin de plus de droits ?</strong>
+            Contactez un administrateur pour demander une promotion de rôle.
+        </div>
+        
+        <!-- Section 4: Animateur -->
+        <h1 id="animateur">4. Rôle Animateur</h1>
+        
+        <p><span class="role-badge role-animator">Animateur</span> Le rôle Animateur permet de gérer les activités et événements de l'association.</p>
+        
+        <h2>🎯 Permissions</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Voir</th>
+                    <th>Créer</th>
+                    <th>Modifier</th>
+                    <th>Supprimer</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Dashboard</td>
+                    <td class="check">✓</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>Activités</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Événements</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Membres</td>
+                    <td class="check">✓</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                </tr>
+                <tr>
+                    <td>Articles</td>
+                    <td class="check">✓</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>📝 Créer une activité</h2>
+        
+        <ol class="steps">
+            <li>Accédez au menu <strong>« Activités »</strong></li>
+            <li>Cliquez sur <strong>« Nouvelle activité »</strong></li>
+            <li>Remplissez : titre, catégorie, description, lieu, horaires</li>
+            <li>Cliquez sur <strong>« Enregistrer »</strong></li>
+        </ol>
+        
+        <h2>📅 Créer un événement</h2>
+        
+        <ol class="steps">
+            <li>Accédez au menu <strong>« Événements »</strong></li>
+            <li>Cliquez sur <strong>« Nouvel événement »</strong></li>
+            <li>Remplissez : titre, dates, lieu, description, image</li>
+            <li>Cliquez sur <strong>« Enregistrer »</strong></li>
+        </ol>
+        
+        <!-- Section 5: Éditeur -->
+        <h1 id="editeur">5. Rôle Éditeur</h1>
+        
+        <p><span class="role-badge role-editor">Éditeur</span> Le rôle Éditeur gère tout le contenu éditorial du site.</p>
+        
+        <h2>🎯 Permissions</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Voir</th>
+                    <th>Créer</th>
+                    <th>Modifier</th>
+                    <th>Supprimer</th>
+                    <th>Publier</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Articles</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Pages</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Événements</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Témoignages</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Messages</td>
+                    <td class="check">✓</td>
+                    <td>—</td>
+                    <td class="check">✓</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>Médias</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>Utilisateurs</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>📝 Créer un article</h2>
+        
+        <ol class="steps">
+            <li>Menu <strong>« Articles »</strong> → <strong>« Nouvel article »</strong></li>
+            <li>Remplissez le titre, l'extrait, le contenu</li>
+            <li>Ajoutez une image de couverture</li>
+            <li>Choisissez la catégorie</li>
+            <li>Sélectionnez le statut (Brouillon ou Publié)</li>
+            <li>Cliquez sur <strong>« Enregistrer »</strong></li>
+        </ol>
+        
+        <h2>✏️ Mode Édition en ligne</h2>
+        
+        <p>Les éditeurs peuvent modifier le contenu directement sur les pages du site :</p>
+        
+        <ol class="steps">
+            <li>Activez le <strong>Mode Édition</strong> depuis le dashboard</li>
+            <li>Naviguez vers la page à modifier</li>
+            <li>Survolez les éléments éditables (icône crayon)</li>
+            <li>Cliquez pour modifier le texte</li>
+            <li>Appuyez sur <strong>Entrée</strong> pour sauvegarder</li>
+        </ol>
+        
+        <div class="info-box">
+            <strong>💡 Astuce</strong>
+            Appuyez sur <strong>Échap</strong> pour annuler une modification en cours.
+        </div>
+        
+        <!-- Section 6: Administrateur -->
+        <h1 id="admin">6. Rôle Administrateur</h1>
+        
+        <p><span class="role-badge role-admin">Administrateur</span> L'Administrateur dispose de tous les droits sur le site.</p>
+        
+        <h2>🔑 Accès complet</h2>
+        
+        <p>En plus de toutes les fonctionnalités des autres rôles, l'administrateur peut :</p>
+        
+        <ul>
+            <li>Gérer les utilisateurs (créer, modifier, supprimer)</li>
+            <li>Attribuer et modifier les rôles</li>
+            <li>Configurer les permissions</li>
+            <li>Valider ou rejeter le contenu soumis</li>
+            <li>Accéder aux paramètres du site</li>
+            <li>Consulter les logs d'audit</li>
+        </ul>
+        
+        <h2>👥 Gestion des utilisateurs</h2>
+        
+        <h3>Créer un utilisateur</h3>
+        
+        <ol class="steps">
+            <li>Menu <strong>« Utilisateurs »</strong></li>
+            <li>Cliquez sur <strong>« Nouvel utilisateur »</strong></li>
+            <li>Remplissez : email, nom, mot de passe</li>
+            <li>Sélectionnez le rôle</li>
+            <li>Cliquez sur <strong>« Créer »</strong></li>
+        </ol>
+        
+        <h3>Modifier un rôle</h3>
+        
+        <ol class="steps">
+            <li>Trouvez l'utilisateur dans la liste</li>
+            <li>Cliquez sur le menu d'actions</li>
+            <li>Sélectionnez le nouveau rôle</li>
+            <li>Confirmez le changement</li>
+        </ol>
+        
+        <h2>📋 Rôles disponibles</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Rôle</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="role-badge role-viewer">Lecteur</span></td>
+                    <td>Lecture seule, rôle par défaut</td>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-animator">Animateur</span></td>
+                    <td>Gestion des activités et événements</td>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-editor">Éditeur</span></td>
+                    <td>Gestion complète du contenu</td>
+                </tr>
+                <tr>
+                    <td><span class="role-badge role-admin">Admin</span></td>
+                    <td>Accès complet au système</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>✅ Validation du contenu</h2>
+        
+        <ol class="steps">
+            <li>Accédez à <strong>« File de validation »</strong></li>
+            <li>Consultez les contenus en attente</li>
+            <li>Lisez et examinez chaque élément</li>
+            <li>Cliquez sur <strong>« Approuver »</strong> ou <strong>« Rejeter »</strong></li>
+        </ol>
+        
+        <div class="info-box warning">
+            <strong>⚠️ Important</strong>
+            Lors d'un rejet, ajoutez toujours un commentaire pour expliquer les corrections attendues.
+        </div>
+        
+        <!-- Annexes -->
+        <h1 id="annexes">7. Annexes</h1>
+        
+        <h2>📊 Tableau récapitulatif des rôles</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Fonctionnalité</th>
+                    <th>Invité</th>
+                    <th>Membre</th>
+                    <th>Lecteur</th>
+                    <th>Animateur</th>
+                    <th>Éditeur</th>
+                    <th>Admin</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Pages publiques</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Espace membre</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Dashboard admin</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Activités (CRUD)</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Articles (CRUD)</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Utilisateurs</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                </tr>
+                <tr>
+                    <td>Paramètres</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="cross">✗</td>
+                    <td class="check">✓</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>⌨️ Raccourcis clavier</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Action</th>
+                    <th>Raccourci</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Sauvegarder</td><td><strong>Ctrl/Cmd + S</strong></td></tr>
+                <tr><td>Annuler édition</td><td><strong>Échap</strong></td></tr>
+                <tr><td>Valider</td><td><strong>Entrée</strong></td></tr>
+            </tbody>
+        </table>
+        
+        <h2>🔧 Résolution de problèmes</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Problème</th>
+                    <th>Solution</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Connexion impossible</td>
+                    <td>Vérifiez email/mot de passe, consultez vos emails</td>
+                </tr>
+                <tr>
+                    <td>Fonctionnalités manquantes</td>
+                    <td>Votre rôle n'a pas les permissions requises</td>
+                </tr>
+                <tr>
+                    <td>Contenu non visible</td>
+                    <td>Vérifiez le statut de publication</td>
+                </tr>
+                <tr>
+                    <td>Erreur d'enregistrement</td>
+                    <td>Vérifiez les champs obligatoires</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>📞 Contact Support</h2>
+        
+        <p>Pour toute question ou problème :</p>
+        <ul>
+            <li><strong>Email :</strong> contact@maillonsdelespoir.re</li>
+            <li><strong>Téléphone :</strong> Voir page Contact</li>
+            <li><strong>En ligne :</strong> Formulaire de contact sur le site</li>
+        </ul>
+        
+        <!-- Footer -->
+        <div class="page-footer">
+            <p><strong>Les Maillons de l'Espoir</strong> — Guide Utilisateur v1.0</p>
+            <p>© 2026 — Tous droits réservés</p>
+        </div>
+    </div>
+</body>
+</html>
