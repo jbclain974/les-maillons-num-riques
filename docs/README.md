@@ -19,6 +19,9 @@ Description détaillée de toutes les fonctionnalités du système.
 ### [Rôles et Permissions](./USER_ROLES.md)
 Système de rôles, permissions et contrôle d'accès.
 
+### [Guide Utilisateur](./USER_GUIDE_FR.md) 📖
+**Manuel complet pour tous les utilisateurs** - De l'invité à l'administrateur, avec instructions détaillées pour chaque rôle.
+
 ### [Guide de Développement](./DEVELOPMENT.md)
 Instructions pour le développement local et les contributions.
 
