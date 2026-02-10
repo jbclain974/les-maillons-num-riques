@@ -31,6 +31,7 @@ import {
   Menu,
   Home,
   Boxes,
+  UserCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
@@ -56,6 +57,8 @@ const configItems = [
   { title: "Permissions", url: "/admin/permissions", icon: Shield, module: 'users' as const },
   { title: "Paramètres", url: "/admin/settings", icon: Settings, module: 'settings' as const },
 ];
+
+const memberLink = { title: "Espace membre", url: "/membre", icon: UserCircle };
 
 export function AdminSidebar() {
   const { state } = useSidebar();
@@ -117,6 +120,22 @@ export function AdminSidebar() {
             </SidebarGroupContent>
           </SidebarGroup>
         )}
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Accès rapide</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive(memberLink.url)}>
+                  <NavLink to={memberLink.url}>
+                    <memberLink.icon className="h-4 w-4" />
+                    <span>{memberLink.title}</span>
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="border-t border-sidebar-border p-4">
