@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,11 +15,27 @@ const Auth = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  // Rediriger si déjà connecté
+  // Rediriger selon le rôle de l'utilisateur
   useEffect(() => {
-    if (user) {
-      navigate("/admin");
-    }
+    if (!user) return;
+
+    const checkRoleAndRedirect = async () => {
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+
+      const userRoles = roles?.map(r => r.role) || [];
+      const isStaff = userRoles.some(r => ['admin', 'editor', 'animator'].includes(r));
+
+      if (isStaff) {
+        navigate("/admin");
+      } else {
+        navigate("/membre");
+      }
+    };
+
+    checkRoleAndRedirect();
   }, [user, navigate]);
 
   const [loginData, setLoginData] = useState({
