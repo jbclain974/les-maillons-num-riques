@@ -6,7 +6,7 @@ import { useNavigation } from "@/hooks/useSiteContent";
 import { useAuth } from "@/lib/auth";
 import { useAdminEdit } from "@/contexts/AdminEditContext";
 import EditableWrapper from "@/components/editable/EditableWrapper";
-import logoAssociation from "@/assets/logo-maillons-espoir.png";
+import logoAssociation from "@/assets/logo-maillons-espoir.svg";
 import {
   Dialog,
   DialogContent,
