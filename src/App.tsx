@@ -48,6 +48,8 @@ import MemberDirectory from "./pages/member/MemberDirectory";
 import MemberEvents from "./pages/member/MemberEvents";
 import MemberActivities from "./pages/member/MemberActivities";
 import NotFound from "./pages/NotFound";
+import Dons from "./pages/Dons";
+import ProgrammeAnnuel from "./pages/ProgrammeAnnuel";
 
 const queryClient = new QueryClient();
 
@@ -348,6 +350,8 @@ const App = () => (
               }
             />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/programme-annuel" element={<ProgrammeAnnuel />} />
+            <Route path="/dons" element={<Dons />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </AdminEditProvider>
@@ -358,3 +362,4 @@ const App = () => (
 );
 
 export default App;
+// Ajout des routes - Sam 19/02/2026
