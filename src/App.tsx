@@ -50,6 +50,9 @@ import MemberActivities from "./pages/member/MemberActivities";
 import NotFound from "./pages/NotFound";
 import Dons from "./pages/Dons";
 import ProgrammeAnnuel from "./pages/ProgrammeAnnuel";
+import Organigramme from "./pages/Organigramme";
+import VeilleSanitaire from "./pages/VeilleSanitaire";
+import DocumentsOfficiels from "./pages/DocumentsOfficiels";
 
 const queryClient = new QueryClient();
 
@@ -352,6 +355,9 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="/programme-annuel" element={<ProgrammeAnnuel />} />
             <Route path="/dons" element={<Dons />} />
+            <Route path="/organigramme" element={<Organigramme />} />
+            <Route path="/veille-sanitaire" element={<VeilleSanitaire />} />
+            <Route path="/documents-officiels" element={<DocumentsOfficiels />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           </AdminEditProvider>
