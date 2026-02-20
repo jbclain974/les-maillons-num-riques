@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Heart, User, GripVertical, Plus, Trash2, Check, Loader2 } from "lucide-react";
+import { Menu, X, User, GripVertical, Plus, Trash2, Check, Loader2 } from "lucide-react";
 import { useNavigation } from "@/hooks/useSiteContent";
 import { useAuth } from "@/lib/auth";
 import { useAdminEdit } from "@/contexts/AdminEditContext";
 import EditableWrapper from "@/components/editable/EditableWrapper";
+import logoAssociation from "@/assets/logo-maillons-espoir.png";
 import {
   Dialog,
   DialogContent,
@@ -38,9 +39,12 @@ const Header = () => {
   const defaultNavigation = [
     { id: "default-1", label: "Accueil", url: "/" },
     { id: "default-2", label: "L'Association", url: "/association" },
+    { id: "default-2b", label: "Organigramme", url: "/organigramme" },
     { id: "default-3", label: "Nos Actions", url: "/nos-actions" },
     { id: "default-4", label: "Projets & Événements", url: "/projets" },
     { id: "default-5", label: "Actualités", url: "/actualites" },
+    { id: "default-5b", label: "Veille Sanitaire", url: "/veille-sanitaire" },
+    { id: "default-5c", label: "Documents", url: "/documents-officiels" },
     { id: "default-6", label: "Témoignages", url: "/temoignages" },
     { id: "default-7", label: "Contact", url: "/contact" },
   ];
@@ -122,7 +126,15 @@ const Header = () => {
       <nav className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link to="/" className="flex items-center space-x-2">
-          <Heart className="h-8 w-8 text-primary" fill="currentColor" />
+          <img 
+            src={logoAssociation} 
+            alt="Les Maillons de l'Espoir" 
+            className="h-10 w-10 object-contain"
+            onError={(e) => {
+              // Fallback si le logo n'est pas encore disponible
+              e.currentTarget.style.display = 'none';
+            }}
+          />
           <span className="text-xl font-bold text-foreground">
             Les Maillons de l'Espoir
           </span>
@@ -175,25 +187,17 @@ const Header = () => {
           )}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA Buttons - TOUJOURS afficher Espace membre et Admin */}
         <div className="hidden items-center space-x-4 lg:flex">
-          {user ? (
-            <>
-              <Button asChild variant="outline" size="sm">
-                <Link to="/membre">
-                  <User className="h-4 w-4 mr-2" />
-                  Espace membre
-                </Link>
-              </Button>
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/admin">Admin</Link>
-              </Button>
-            </>
-          ) : (
-            <Button asChild variant="outline" size="sm">
-              <Link to="/auth">Connexion</Link>
-            </Button>
-          )}
+          <Button asChild variant="outline" size="sm">
+            <Link to={user ? "/membre" : "/auth"}>
+              <User className="h-4 w-4 mr-2" />
+              Espace membre
+            </Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/admin">Admin</Link>
+          </Button>
           <Button asChild className="gradient-sunset">
             <Link to="/soutenir">Soutenir</Link>
           </Button>
@@ -229,23 +233,15 @@ const Header = () => {
               </Link>
             ))}
             <div className="pt-4 space-y-2">
-              {user ? (
-                <>
-                  <Button asChild variant="outline" className="w-full">
-                    <Link to="/membre" onClick={() => setMobileMenuOpen(false)}>
-                      <User className="h-4 w-4 mr-2" />
-                      Espace membre
-                    </Link>
-                  </Button>
-                  <Button asChild variant="ghost" className="w-full">
-                    <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>Admin</Link>
-                  </Button>
-                </>
-              ) : (
-                <Button asChild variant="outline" className="w-full">
-                  <Link to="/auth" onClick={() => setMobileMenuOpen(false)}>Connexion</Link>
-                </Button>
-              )}
+              <Button asChild variant="outline" className="w-full">
+                <Link to={user ? "/membre" : "/auth"} onClick={() => setMobileMenuOpen(false)}>
+                  <User className="h-4 w-4 mr-2" />
+                  Espace membre
+                </Link>
+              </Button>
+              <Button asChild variant="ghost" className="w-full">
+                <Link to="/admin" onClick={() => setMobileMenuOpen(false)}>Admin</Link>
+              </Button>
               <Button asChild className="w-full gradient-sunset">
                 <Link to="/soutenir" onClick={() => setMobileMenuOpen(false)}>Soutenir</Link>
               </Button>
