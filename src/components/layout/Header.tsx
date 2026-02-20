@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, GripVertical, Plus, Trash2, Check, Loader2 } from "lucide-react";
+import { Menu, X, User, GripVertical, Plus, Trash2, Check, Loader2, ChevronDown } from "lucide-react";
 import { useNavigation } from "@/hooks/useSiteContent";
 import { useAuth } from "@/lib/auth";
 import { useAdminEdit } from "@/contexts/AdminEditContext";
 import EditableWrapper from "@/components/editable/EditableWrapper";
-import logoAssociation from "@/assets/logo-maillons-espoir.svg";
+import logoAssociation from "@/assets/logo-maillons-espoir.png";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,12 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,19 +41,28 @@ const Header = () => {
   } | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Fallback navigation while loading or if no data
+  // Navigation organisée par catégories
   const defaultNavigation = [
     { id: "default-1", label: "Accueil", url: "/" },
     { id: "default-2", label: "L'Association", url: "/association" },
-    { id: "default-2b", label: "Organigramme", url: "/organigramme" },
     { id: "default-3", label: "Nos Actions", url: "/nos-actions" },
-    { id: "default-4", label: "Projets & Événements", url: "/projets" },
-    { id: "default-4b", label: "Programme 2026", url: "/programme-annuel" },
+    { id: "default-4", label: "Projets", url: "/projets" },
     { id: "default-5", label: "Actualités", url: "/actualites" },
-    { id: "default-5b", label: "Veille Sanitaire", url: "/veille-sanitaire" },
-    { id: "default-5c", label: "Documents", url: "/documents-officiels" },
-    { id: "default-6", label: "Témoignages", url: "/temoignages" },
-    { id: "default-7", label: "Contact", url: "/contact" },
+  ];
+
+  // Sous-menu Association
+  const associationSubMenu = [
+    { id: "sub-1", label: "Organigramme", url: "/organigramme" },
+    { id: "sub-2", label: "Programme 2026", url: "/programme-annuel" },
+    { id: "sub-3", label: "Veille Sanitaire", url: "/veille-sanitaire" },
+    { id: "sub-4", label: "Documents", url: "/documents-officiels" },
+  ];
+
+  // Sous-menu Engagement
+  const engagementSubMenu = [
+    { id: "eng-1", label: "Témoignages", url: "/temoignages" },
+    { id: "eng-2", label: "Soutenir", url: "/soutenir" },
+    { id: "eng-3", label: "Contact", url: "/contact" },
   ];
 
   const navigation = navigationItems && navigationItems.length > 0 
@@ -142,7 +157,7 @@ const Header = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden items-center space-x-6 lg:flex">
+        <div className="hidden items-center gap-1 lg:flex">
           {navigation.map((item) => (
             canEdit ? (
               <div key={item.id} className="flex items-center gap-1 group">
@@ -154,7 +169,7 @@ const Header = () => {
                   })}
                   label="Modifier"
                 >
-                  <span className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer">
+                  <span className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary cursor-pointer px-3 py-2">
                     {item.label}
                   </span>
                 </EditableWrapper>
@@ -169,12 +184,46 @@ const Header = () => {
               <Link
                 key={item.id}
                 to={item.url}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary px-3 py-2"
               >
                 {item.label}
               </Link>
             )
           ))}
+          
+          {/* Dropdown Association */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary px-3 py-2">
+                Association
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {associationSubMenu.map((item) => (
+                <DropdownMenuItem key={item.id} asChild>
+                  <Link to={item.url} className="w-full">{item.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Dropdown Engagement */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground transition-colors hover:text-primary px-3 py-2">
+                Engagement
+                <ChevronDown className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-48">
+              {engagementSubMenu.map((item) => (
+                <DropdownMenuItem key={item.id} asChild>
+                  <Link to={item.url} className="w-full">{item.label}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           
           {/* Add new menu item button */}
           {canEdit && (
@@ -233,6 +282,37 @@ const Header = () => {
                 {item.label}
               </Link>
             ))}
+            
+            {/* Sous-menu Association mobile */}
+            <div className="pl-4 border-l-2 border-primary/20 mt-2">
+              <p className="text-xs font-semibold text-primary px-3 py-1">Association</p>
+              {associationSubMenu.map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.url}
+                  className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-primary"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            
+            {/* Sous-menu Engagement mobile */}
+            <div className="pl-4 border-l-2 border-secondary/20 mt-2">
+              <p className="text-xs font-semibold text-secondary px-3 py-1">Engagement</p>
+              {engagementSubMenu.map((item) => (
+                <Link
+                  key={item.id}
+                  to={item.url}
+                  className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-primary"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+            
             <div className="pt-4 space-y-2">
               <Button asChild variant="outline" className="w-full">
                 <Link to={user ? "/membre" : "/auth"} onClick={() => setMobileMenuOpen(false)}>
