@@ -1,0 +1,1 @@
+const ProgrammeAnnuel = () => <div>Programme 2026</div>; export default ProgrammeAnnuel;
