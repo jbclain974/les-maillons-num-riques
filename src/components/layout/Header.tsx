@@ -42,6 +42,7 @@ const Header = () => {
     { id: "default-2b", label: "Organigramme", url: "/organigramme" },
     { id: "default-3", label: "Nos Actions", url: "/nos-actions" },
     { id: "default-4", label: "Projets & Événements", url: "/projets" },
+    { id: "default-4b", label: "Programme 2026", url: "/programme-annuel" },
     { id: "default-5", label: "Actualités", url: "/actualites" },
     { id: "default-5b", label: "Veille Sanitaire", url: "/veille-sanitaire" },
     { id: "default-5c", label: "Documents", url: "/documents-officiels" },
